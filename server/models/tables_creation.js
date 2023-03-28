@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 require('dotenv').config();
 
-const Password = process.env.PASSWORD;
-const userName = process.env.USER_NAME;
+const Password = process.env.DB_PASSWORD;
+const userName = process.env.DB_USERNAME;
 const dbHost = process.env.DB_HOST;
 const dbName = process.env.DB_NAME;
 
@@ -23,6 +23,7 @@ con.query('CREATE DATABASE IF NOT EXISTS ' + dbName, (err) => {
   console.log('Database created');
 });
 
+// con.changeUser() is used to switch the connection to the dbName database.
 con.changeUser({ database: dbName }, (err) => {
   if (err) throw err;
 });
