@@ -17,11 +17,11 @@ const con = require('./connection_create');
 const checkMail = async (mail) => {
   const checkUser = con.connectionPromise.query(
     `SELECT * FROM users_details WHERE email = '${mail}'`,
-    (err, result) => {
+    (err) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(result);
+        console.log('Email found!!');
       }
     }
   );
@@ -31,19 +31,23 @@ const checkMail = async (mail) => {
 
 //Checking if the user exists by his email and password
 const checkUserExists = async (mail, password) => {
-  const checkUser = con.connectionPromise.query(
-    `SELECT * FROM users_details WHERE email = '${mail}' and password = '${password}'`,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(result);
+  return new Promise((resolve, reject) => {
+    con.connectionPromise.query(
+      `SELECT * FROM users_details WHERE email = '${mail}' and password = '${password}'`,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(false);
+        } else {
+          console.log(result);
+          resolve(true);
+        }
       }
-    }
-  );
+    );
+  });
 };
 
-//checkUserExists('shon@gmail.com', 'blabla');
+//checkUserExists('netanel@gmail.com', 'bfhmdbfbeh');
 
 const insertClient = async (
   email,
@@ -192,4 +196,75 @@ const insertUser = async (
   });
 };
 
-// insertUser('netanel@gmail.com', 'netanel', 'yom', '555555', 'bfhmdbfbeh');
+//insertUser('shon@gmail.com', 'shon', 'khu', '2134214', 'bfhmdbfbeh');
+const checkPasswordInHistory = (email, password) => {
+  const q = `SELECT * FROM password_history WHERE email = ${email} AND password = ${password}`;
+
+  con.connectionPromise.query(q, (err, result) => {
+    if (err) {
+      console.log('User used this password already');
+      return false;
+    } else {
+      console.log('User did not use this password already');
+      return true;
+    }
+  });
+};
+
+const updatePassword = async (email, old_password, new_password) => {
+  const userExists = await checkUserExists(email, old_password);
+  if (userExists) {
+    const check = checkPasswordInHistory(email, new_password);
+    if (!check) {
+      console.log('Please use a password you never used!');
+      return;
+    } else {
+      con.connectionPromise.query(
+        'UPDATE users_details SET password = ? WHERE email = ? AND password = ?',
+        [new_password, email, old_password],
+        (err, res) => {
+          if (err) {
+            console.log('Error could not update password!');
+            throw err;
+          } else {
+            console.log('Updated the password!');
+            console.log(res);
+          }
+        }
+      );
+    }
+  } else {
+    console.log('The user does not exist!');
+    return;
+  }
+};
+
+//updatePassword('shon@gmail.com', 'wdvdwgw', 'aaa');
+
+// sort client table by specific column
+const sort_by = async (column_name) => {
+  con.connectionPromise.query(
+    `SELECT * FROM clients ORDER BY '${column_name}' ASC`,
+    (error, results) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('Successfully sorted!');
+        return results;
+      }
+    }
+  );
+};
+
+module.exports = {
+  insertUser,
+  remove_user,
+  remove_client,
+  getAllClients,
+  checkClient,
+  insertClient,
+  checkUserExists,
+  checkMail,
+  updatePassword,
+  sort_by,
+};
