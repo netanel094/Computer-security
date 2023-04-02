@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 require('dotenv').config();
 
 const Password = process.env.DB_PASSWORD;
@@ -10,6 +10,7 @@ var con = mysql.createConnection({
   host: dbHost,
   user: userName,
   password: Password,
+  database: dbName,
 });
 
 con.connect((err) => {
@@ -32,9 +33,9 @@ let sql_users_table =
   'CREATE TABLE IF NOT EXISTS ' +
   dbName +
   '.users_details' +
-  '(`email` VARCHAR(50) NOT NULL, `first_name` VARCHAR(45) NOT NULL, `last_name` VARCHAR(45) NOT NULL, `phone_number` VARCHAR(10) NOT NULL, `password` VARCHAR(128) NOT NULL, `password_token` VARCHAR(255) NOT NULL, `pass_token_activated` TINYINT NOT NULL , `creation_token` VARCHAR(45) NOT NULL, `logins` INT NOT NULL, `login_time`DATETIME NOT NULL, `activated` TINYINT NOT NULL, PRIMARY KEY(`email`))';
+  '(`email` VARCHAR(50) NOT NULL, `first_name` VARCHAR(45) NOT NULL, `last_name` VARCHAR(45) NOT NULL, `phone_number` VARCHAR(10) NOT NULL, `password` VARCHAR(128) NOT NULL, PRIMARY KEY(`email`))';
 
-con.query(sql_users_table, function (err, result) {
+con.query(sql_users_table, function (err) {
   if (err) throw err;
   console.log('Users table created');
 });
@@ -56,7 +57,7 @@ let sql_clients_table =
   '.clients' +
   '(`email` VARCHAR(50) NOT NULL, `first_name` VARCHAR(45) NOT NULL, `last_name` VARCHAR(45) NOT NULL, `phone_number` VARCHAR(10) NOT NULL, `city` VARCHAR(45) NOT NULL, PRIMARY KEY(`email`))';
 
-con.query(sql_clients_table, function (err, result) {
+con.query(sql_clients_table, function (err) {
   if (err) throw err;
   console.log('Clients table created');
 });

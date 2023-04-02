@@ -25,4 +25,7 @@ dist-ssr
 
 .vscode
 .env
+.prettierrc
 node_modules
+package-lock.json
+
