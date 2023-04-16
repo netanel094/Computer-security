@@ -1,29 +1,23 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const con = require('../models/connection_create');
 const allQueries = require('../models/queries');
 
-/* GET home page. */
-router.post('/', async function (req, res, next) {
+router.post('/', async function (req, res) {
   const { password, email } = req.body;
 
   try {
     const userAuthentication = await allQueries.checkUserExists(
-      password,
       email,
+      password,
       con
     );
-    if (!userAuthentication) return res.status(400).send('User is not found!');
-
-    const allClients = await allQueries.getAllClients(con);
-    if (!allClients) {
-      return res.status(400).send('No clients found!');
-    } else {
-      return res.status(200).send(allClients);
-    }
+    if (userAuthentication === false)
+      return res.status(400).send('User is not found!');
+    else res.redirect('/showclients');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error User Authentication !');
+    res.status(500).send('Error User Authentication!');
   }
 });
 

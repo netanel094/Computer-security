@@ -4,12 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var showClientsRouter = require('./routes/showclients');
 var addClientRouter = require('./routes/addclient');
 var removeClientRouter = require('./routes/removeclient');
 var indexRouter = require('./routes/index');
 var addUserRouter = require('./routes/adduser');
 var usersRouter = require('./routes/users');
 var userAuthentication = require('./routes/userauthentication');
+var changePasswordRouter = require('./routes/changepassword');
 
 require('./models/connection_create');
 require('./models/tables_creation');
@@ -32,6 +34,8 @@ app.use('/adduser', addUserRouter);
 app.use('/addclient', addClientRouter);
 app.use('/removeclient', removeClientRouter);
 app.use('/userauthentication', userAuthentication);
+app.use('/showclients', showClientsRouter);
+app.use('/changepassword', changePasswordRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

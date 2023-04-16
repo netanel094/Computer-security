@@ -15,9 +15,9 @@ router.post('/', async function (req, res) {
       password,
       con
     );
-    if (!userInserted) {
-      return res.status(400).send('User already exists!');
-    }
+    if (userInserted === false)
+      return res.status(400).send('Could not push user!');
+
     return res.status(200).send('User inserted successfully!');
   } catch (error) {
     console.error(error);
