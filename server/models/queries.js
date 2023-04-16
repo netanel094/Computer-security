@@ -1,39 +1,49 @@
-const con = require('./connection_create');
-
-// const data = {
-//   first_name: 'nati',
-//   email: 'nati@gmail.com',
-//   last_name: 'yomtobian',
-//   phone_number: '2353523',
-//   city: 'rahlatz',
-// };
-
-// con.connectionPromise.query('INSERT INTO clients SET ?', [data], (error) => {
-//   if (error) throw error;
-//   console.log('Data inserted successfully!');
-// });
-
-//Checking if email exists for (forgot password)
-const checkMail = async (mail) => {
-  const checkUser = con.connectionPromise.query(
-    `SELECT * FROM users_details WHERE email = '${mail}'`,
-    (err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log('Email found!!');
+//Checking if email exists in users schema
+const checkUserMail = (mail, con) => {
+  return new Promise((resolve, reject) => {
+    con.query(
+      `SELECT * FROM users_details WHERE email = ?`,
+      mail,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else if (result.length > 0) {
+          console.log('Email found!!');
+          resolve(true);
+        } else {
+          console.log('Email not found');
+          resolve(false);
+        }
       }
-    }
-  );
+    );
+  });
 };
 
-//checkMail('shon@gmail.com');
+//Checking if email exists in clients schema
+const checkClientMail = (mail, con) => {
+  return new Promise((resolve, reject) => {
+    con.query(`SELECT * FROM clients WHERE email = ?`, mail, (err, result) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else if (result.length > 0) {
+        console.log('Email found!!');
+        resolve(true);
+      } else {
+        console.log('Email not found');
+        resolve(false);
+      }
+    });
+  });
+};
 
 //Checking if the user exists by his email and password
-const checkUserExists = async (mail, password) => {
+const checkUserExists = async (mail, password, con) => {
   return new Promise((resolve, reject) => {
-    con.connectionPromise.query(
-      `SELECT * FROM users_details WHERE email = '${mail}' and password = '${password}'`,
+    con.query(
+      `SELECT * FROM users_details WHERE email = ? and password = ?`,
+      [mail, password],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -47,33 +57,121 @@ const checkUserExists = async (mail, password) => {
   });
 };
 
-//checkUserExists('netanel@gmail.com', 'bfhmdbfbeh');
-
+//Inserting the client into the database
 const insertClient = async (
   email,
   first_name,
   last_name,
   phone_number,
-  city
+  city,
+  con
 ) => {
-  const query_users = `INSERT INTO clients (email,first_name,last_name,phone_number,city) VALUES (?, ?, ?, ?, ?)`;
-  const emailExists = await checkMail(email);
+  const queryUsers = `INSERT INTO clients (email,first_name,last_name,phone_number,city) VALUES (?, ?, ?, ?, ?)`;
+  const emailExists = await checkClientMail(email, con);
 
   return new Promise((resolve, reject) => {
     if (emailExists) {
       console.log('The client already exists');
       resolve(false);
+    } else {
+      con.query(
+        queryUsers,
+        [email, first_name, last_name, phone_number, city],
+        (err) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            console.log('Inserted succesfully');
+            resolve(true);
+          }
+        }
+      );
     }
+  });
+};
 
-    con.connectionPromise.query(
-      query_users,
-      [email, first_name, last_name, phone_number, city],
-      (err) => {
-        if (err) {
-          console.log(err);
-          reject(false);
+//Check if client exists
+const checkClient = async (first_name, last_name, city, phone_number, con) => {
+  return new Promise((resolve, reject) => {
+    con.query(
+      `SELECT * FROM clients WHERE first_name = ? and last_name = ? and city = ? and phone_number = ?`,
+      [first_name, last_name, city, phone_number],
+      (error) => {
+        if (error) reject(error);
+        else resolve(true);
+      }
+    );
+  });
+};
+
+//Returns all clients
+const getAllClients = async (con) => {
+  return new Promise((resolve, reject) => {
+    con.query('SELECT * FROM clients', (error, results) => {
+      if (error) {
+        console.error(error);
+        reject(false);
+      } else {
+        console.log(results);
+        resolve(true);
+      }
+    });
+  });
+};
+
+//Removing the client from the database
+const removeClient = async (
+  first_name,
+  last_name,
+  email,
+  phone_number,
+  city,
+  con
+) => {
+  return new Promise(async (resolve, reject) => {
+    const checkMail = await checkClientMail(email, con);
+    if (!checkMail) {
+      console.log('The client is not found');
+      resolve(false);
+    } else {
+      con.query(
+        'DELETE FROM clients WHERE first_name = ? AND last_name = ? AND email = ? AND phone_number = ? AND city = ?',
+        [first_name, last_name, email, phone_number, city],
+        (error, result) => {
+          if (error) reject(error);
+          else {
+            if (result.affectedRows === 0) {
+              console.log('Client is not removed due to something unexpected');
+              resolve(false);
+            } else {
+              console.log('Client removed successfully!');
+              resolve(true);
+            }
+          }
+        }
+      );
+    }
+  });
+};
+
+//Removing the user from the database
+const removeUser = async (
+  first_name,
+  last_name,
+  email,
+  phone_number,
+  city,
+  con
+) => {
+  return new Promise((resolve, reject) => {
+    con.query(
+      `DELETE FROM clients WHERE first_name = ? and last_name = ? and email = ? and phone_number= ? and city = ?`,
+      [first_name, last_name, email, phone_number, city],
+      (error) => {
+        if (error) {
+          reject(error);
         } else {
-          console.log('Inserted succesfully');
           resolve(true);
         }
       }
@@ -81,98 +179,17 @@ const insertClient = async (
   });
 };
 
-// insertClient(
-//   'nati2@gmail.com',
-//   'Shon2',
-//   'Khundiashvili2',
-//   '0545647365',
-//   'Bat-Yam2'
-// );
-
-// search user
-const checkClient = async (first_name, last_name, city, phone_number) => {
-  con.connectionPromise.query(
-    `SELECT * FROM clients WHERE first_name = '${first_name}' and last_name = '${last_name}' and city = '${city}' and phone_number = '${phone_number}'`,
-    (error, result) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(result);
-      }
-    }
-  );
-};
-
-// checkClient('Shon', 'Khundiashvili', 'Bat-Yam', '0545647365');
-
-const getAllClients = async () => {
-  con.connectionPromise.query('SELECT * FROM clients', (error, results) => {
-    if (error) {
-      console.error(error);
-    } else {
-      console.log(results);
-    }
-  });
-};
-
-// getAllClients();
-
-const remove_client = async (
-  first_name,
-  last_name,
-  email,
-  phone_number,
-  city
-) => {
-  con.connectionPromise.query(
-    `DELETE FROM clients WHERE first_name = '${first_name}' and last_name = '${last_name}' and email = '${email}' and phone_number='${phone_number}' and city = '${city}'`,
-    (error, results) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(results);
-      }
-    }
-  );
-};
-
-// remove_client(
-//   'Shon',
-//   'Khundiashvili',
-//   'nati@gmail.com',
-//   '0545647365',
-//   'Bat-Yam'
-// );
-
-// todo
-const remove_user = async (
-  first_name,
-  last_name,
-  email,
-  phone_number,
-  city
-) => {
-  con.connectionPromise.query(
-    `DELETE FROM clients WHERE first_name = '${first_name}' and last_name = '${last_name}' and email = '${email}' and phone_number='${phone_number}' and city = '${city}'`,
-    (error, results) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(results);
-      }
-    }
-  );
-};
-
+//Inserting the user into the database
 const insertUser = async (
   email,
   first_name,
   last_name,
   phone_number,
-  password
+  password,
+  con
 ) => {
   const query_users = `INSERT INTO users_details (email,first_name,last_name,phone_number,password) VALUES (?, ?, ?, ?, ?)`;
-  const emailExists = await checkMail(email);
+  const emailExists = await checkUserMail(email, con);
 
   return new Promise((resolve, reject) => {
     if (emailExists) {
@@ -180,13 +197,13 @@ const insertUser = async (
       resolve(false);
     }
 
-    con.connectionPromise.query(
+    con.query(
       query_users,
       [email, first_name, last_name, phone_number, password],
       (err) => {
         if (err) {
           console.log(err);
-          reject(false);
+          reject(err);
         } else {
           console.log('Inserted succesfully');
           resolve(true);
@@ -196,75 +213,79 @@ const insertUser = async (
   });
 };
 
-//insertUser('shon@gmail.com', 'shon', 'khu', '2134214', 'bfhmdbfbeh');
-const checkPasswordInHistory = (email, password) => {
-  const q = `SELECT * FROM password_history WHERE email = ${email} AND password = ${password}`;
+//Checking if the password is in the password history already
+const checkPasswordInHistory = (email, password, con) => {
+  return new Promise((resolve, reject) => {
+    const q = `SELECT * FROM password_history WHERE email = ? AND password = ?`;
 
-  con.connectionPromise.query(q, (err, result) => {
-    if (err) {
-      console.log('User used this password already');
-      return false;
+    con.query(q, [email, password], (err) => {
+      if (err) reject(err);
+      else {
+        console.log('User did not use this password!');
+        resolve(true);
+      }
+    });
+  });
+};
+
+//Updating the password
+const updatePassword = async (email, old_password, new_password, con) => {
+  return new Promise(async (resolve, reject) => {
+    const userExists = await checkUserExists(email, old_password);
+    if (userExists) {
+      const check = checkPasswordInHistory(email, new_password);
+      if (!check) {
+        console.log('Please use a password you never used!');
+        resolve(false);
+      } else {
+        con.query(
+          'UPDATE users_details SET password = ? WHERE email = ? AND password = ?',
+          [new_password, email, old_password],
+          (err) => {
+            if (err) {
+              console.log('Error could not update password!');
+              reject(err);
+            } else {
+              console.log('Updated the password!');
+              resolve(true);
+            }
+          }
+        );
+      }
     } else {
-      console.log('User did not use this password already');
-      return true;
+      console.log('The user does not exist!');
+      resolve(false);
     }
   });
 };
 
-const updatePassword = async (email, old_password, new_password) => {
-  const userExists = await checkUserExists(email, old_password);
-  if (userExists) {
-    const check = checkPasswordInHistory(email, new_password);
-    if (!check) {
-      console.log('Please use a password you never used!');
-      return;
-    } else {
-      con.connectionPromise.query(
-        'UPDATE users_details SET password = ? WHERE email = ? AND password = ?',
-        [new_password, email, old_password],
-        (err, res) => {
-          if (err) {
-            console.log('Error could not update password!');
-            throw err;
-          } else {
-            console.log('Updated the password!');
-            console.log(res);
-          }
+//Sort client table by specific column
+const sortBy = async (column_name, con) => {
+  return new Promise((resolve, reject) => {
+    con.query(
+      `SELECT * FROM clients ORDER BY '${column_name}' ASC`,
+      (error) => {
+        if (error) reject(false);
+        else {
+          console.log('Successfully sorted!');
+          resolve(true);
         }
-      );
-    }
-  } else {
-    console.log('The user does not exist!');
-    return;
-  }
-};
-
-//updatePassword('shon@gmail.com', 'wdvdwgw', 'aaa');
-
-// sort client table by specific column
-const sort_by = async (column_name) => {
-  con.connectionPromise.query(
-    `SELECT * FROM clients ORDER BY '${column_name}' ASC`,
-    (error, results) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log('Successfully sorted!');
-        return results;
       }
-    }
-  );
+    );
+  });
 };
 
+//Exporting all the queries in order to use them
 module.exports = {
   insertUser,
-  remove_user,
-  remove_client,
+  removeUser,
+  removeClient,
   getAllClients,
   checkClient,
   insertClient,
   checkUserExists,
-  checkMail,
+  checkUserMail,
   updatePassword,
-  sort_by,
+  sortBy,
+  checkClientMail,
 };
