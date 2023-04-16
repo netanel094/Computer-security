@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const allQueries = require('../models/queries');
 const con = require('../models/connection_create');
 
