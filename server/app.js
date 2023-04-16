@@ -9,6 +9,8 @@ var removeClientRouter = require('./routes/removeclient');
 var indexRouter = require('./routes/index');
 var addUserRouter = require('./routes/adduser');
 var usersRouter = require('./routes/users');
+var userAuthentication = require('./routes/userauthentication');
+
 require('./models/connection_create');
 require('./models/tables_creation');
 
@@ -29,6 +31,7 @@ app.use('/users', usersRouter);
 app.use('/adduser', addUserRouter);
 app.use('/addclient', addClientRouter);
 app.use('/removeclient', removeClientRouter);
+app.use('/userauthentication', userAuthentication);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
