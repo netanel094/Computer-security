@@ -15,11 +15,10 @@ router.post('/', async function (req, res) {
       password,
       con
     );
-    if (userInserted) {
-      res.status(200).send('User inserted successfully!');
-    } else {
-      res.status(400).send('User already exists!');
+    if (!userInserted) {
+      return res.status(400).send('User already exists!');
     }
+    return res.status(200).send('User inserted successfully!');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error adding user!');
