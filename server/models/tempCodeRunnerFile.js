@@ -1,1 +1,0 @@
-checkUserExists(email, old_password);

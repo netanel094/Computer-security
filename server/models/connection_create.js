@@ -15,14 +15,24 @@ const connectionPromise = mysql.createConnection({
 });
 
 const checkConnection = async (con) => {
-  con.connect((err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log('Connected!');
-    }
+  return new Promise((resolve, reject) => {
+    con.connect((err) => {
+      if (err) {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
   });
 };
-module.exports = { connectionPromise };
 
-checkConnection(connectionPromise);
+(async () => {
+  try {
+    const isConnected = await checkConnection(connectionPromise);
+    console.log(`Connected to MySQL server: ${isConnected}`);
+  } catch (error) {
+    console.error(`Error connecting to MySQL server: ${error}`);
+  }
+})();
+
+module.exports = connectionPromise;

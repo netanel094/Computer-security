@@ -16,5 +16,17 @@
     "morgan": "^1.9.1",
     "nodemon": "^2.0.22",
     "parser": "^0.1.4"
-  }
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielsem4/Computer-security.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielsem4/Computer-security/issues"
+  },
+  "homepage": "https://github.com/danielsem4/Computer-security#readme",
+  "description": ""
 }
