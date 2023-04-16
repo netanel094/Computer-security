@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const allQueries = require('../models/queries');
 const con = require('../models/connection_create');
 
@@ -15,11 +15,8 @@ router.post('/', async function (req, res) {
       city,
       con
     );
-    if (clientInserted) {
-      res.status(200).send('Client inserted successfully!');
-    } else {
-      res.status(400).send('Client already exists!');
-    }
+    if (!clientInserted) return res.status(400).send('Client already exists!');
+    return res.status(200).send('Client inserted successfully!');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error adding client!');
