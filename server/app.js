@@ -4,12 +4,17 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var showClientsRouter = require('./routes/showclients');
 var addClientRouter = require('./routes/addclient');
 var removeClientRouter = require('./routes/removeclient');
 var indexRouter = require('./routes/index');
 var addUserRouter = require('./routes/adduser');
 var usersRouter = require('./routes/users');
 var userAuthentication = require('./routes/userauthentication');
+<<<<<<< HEAD
+var changePasswordRouter = require('./routes/changepassword');
+=======
+>>>>>>> a489f13 (create userAuthentication route)
 
 require('./models/connection_create');
 require('./models/tables_creation');
@@ -32,6 +37,11 @@ app.use('/adduser', addUserRouter);
 app.use('/addclient', addClientRouter);
 app.use('/removeclient', removeClientRouter);
 app.use('/userauthentication', userAuthentication);
+<<<<<<< HEAD
+app.use('/showclients', showClientsRouter);
+app.use('/changepassword', changePasswordRouter);
+=======
+>>>>>>> a489f13 (create userAuthentication route)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
