@@ -8,7 +8,11 @@ router.post('/', async function (req, res) {
 
   if (new_password !== verification_password)
     return res.status(400).send('The passwords do not match!');
-
+  else if (new_password === old_password) {
+    return res
+      .status(400)
+      .send('The password you entered is your old password!');
+  }
   const updatedPassword = allQueries.updatePassword(
     email,
     old_password,

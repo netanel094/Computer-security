@@ -179,12 +179,12 @@ const deleteOldPasswordHistory = async (email, con) => {
   )
 `;
   return new Promise(async (resolve, reject) => {
-    await con.query(removeOldPassword, [email], (err) => {
+    await con.query(removeOldPassword, [email, email], (err) => {
       if (err) {
-        console.log('Error removing old password!');
+        console.log('Error removing oldest password!');
         reject(err);
       } else {
-        console.log('Removed password successfully');
+        console.log('Removed oldest password successfully');
         resolve(true);
       }
     });
@@ -196,10 +196,8 @@ const countPasswordInHistory = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     await con.query(countPassword, [email], (err, res) => {
       if (err) reject(err);
-      else {
-        if (res.affectedRows > 3) resolve(true);
-        else resolve(false);
-      }
+      else if (res.affectedRows > 3) resolve(true);
+      else resolve(false);
     });
   });
 };
@@ -311,11 +309,7 @@ const updatePassword = async (email, old_password, new_password, con) => {
           new_password,
           con
         );
-        updatingPassword = await con.query(updatingPassword, [
-          new_password,
-          email,
-          old_password,
-        ]);
+        await con.query(updatingPassword, [new_password, email, old_password]);
 
         if (updatingPassword && pushPassword) {
           console.log(
@@ -351,14 +345,6 @@ const sortBy = async (column_name, con) => {
   });
 };
 
-async function saveVerificationCode(email, code, con) {
-  const sql = `UPDATE users SET verification_code = ? WHERE email = ?`;
-  const values = [code, email];
-
-  const [result, fields] = await con.query(sql, values);
-  return result;
-}
-
 //Exporting all the queries in order to use them
 module.exports = {
   insertUser,
@@ -372,6 +358,29 @@ module.exports = {
   updatePassword,
   sortBy,
   checkClientMail,
-  saveVerificationCode,
   insertPasswordHistory,
 };
+
+//Delete the data from tables! Dont use!!!!
+// const con = require('../models/connection_create');
+
+// const remove = async () => {
+//   const q = 'DELETE FROM password_history';
+
+//   return new Promise((resolve, reject) => {
+//     con.query(q, (err, res) => {
+//       if (err) reject(err);
+//       else {
+//         resolve(true);
+//       }
+//     });
+//   });
+// };
+
+// remove()
+//   .then(() => {
+//     console.log('Data deleted successfully');
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   });
