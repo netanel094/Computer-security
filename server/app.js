@@ -12,6 +12,7 @@ var addUserRouter = require('./routes/adduser');
 var usersRouter = require('./routes/users');
 var userAuthentication = require('./routes/userauthentication');
 var changePasswordRouter = require('./routes/changepassword');
+var UserForgotPasswordRouter = require('./routes//userforgotpassword');
 
 require('./models/connection_create');
 require('./models/tables_creation');
@@ -36,6 +37,7 @@ app.use('/removeclient', removeClientRouter);
 app.use('/userauthentication', userAuthentication);
 app.use('/showclients', showClientsRouter);
 app.use('/changepassword', changePasswordRouter);
+app.use('/userforgotpasssword', UserForgotPasswordRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
