@@ -170,16 +170,22 @@ const removeUser = async (
 };
 
 const deleteOldPasswordHistory = async (email, con) => {
-  const removeOldPassword = `
-  DELETE FROM password_history
-  WHERE email = ? AND creation_date = (
-    SELECT MIN(creation_date)
-    FROM password_history
-    WHERE email = ?
-  )
-`;
   return new Promise(async (resolve, reject) => {
-    await con.query(removeOldPassword, [email, email], (err) => {
+    const removeOldPassword = `
+    DELETE FROM password_history
+    WHERE email = ? AND creation_date = (
+      SELECT MIN(creation_date)
+      FROM (
+        SELECT creation_date
+        FROM password_history
+        WHERE email = ?
+        ORDER BY creation_date ASC
+        LIMIT 1
+      ) AS t
+    )
+    `;
+
+    await con.query(removeOldPassword, [email, email], (err, res) => {
       if (err) {
         console.log('Error removing oldest password!');
         reject(err);
@@ -192,11 +198,11 @@ const deleteOldPasswordHistory = async (email, con) => {
 };
 
 const countPasswordInHistory = async (email, con) => {
-  const countPassword = `SELECT COUNT(email) FROM password_history where email = ?`;
+  const countPassword = `SELECT COUNT(email) as count_mail FROM password_history where email = ?`;
   return new Promise(async (resolve, reject) => {
     await con.query(countPassword, [email], (err, res) => {
       if (err) reject(err);
-      else if (res.affectedRows > 3) resolve(true);
+      else if (res[0]['count_mail'] > 3) resolve(true);
       else resolve(false);
     });
   });
@@ -213,11 +219,13 @@ const insertPasswordHistory = async (email, password, con) => {
       [email, password, currentDate],
       async (err) => {
         if (err) reject(err);
+        console.log('heeeeeeeeeeeeeeeeeeeeeeeeeeeey');
 
         const BiggerThanThreePassword = await countPasswordInHistory(
           email,
           con
         );
+        console.log(BiggerThanThreePassword);
         if (BiggerThanThreePassword) {
           const check = await deleteOldPasswordHistory(email, con);
           if (!check) resolve(false);
@@ -365,7 +373,7 @@ module.exports = {
 // const con = require('../models/connection_create');
 
 // const remove = async () => {
-//   const q = 'DELETE FROM password_history';
+//   const q = 'DELETE FROM users_details';
 
 //   return new Promise((resolve, reject) => {
 //     con.query(q, (err, res) => {
