@@ -44,7 +44,7 @@ const Login : FC = () => {
   return (
     <FormContainer>
       <FormWrapper>
-      <Lottie animationData={animationData} style={{ width: "70%", margin: "auto" }}/>
+      <Lottie animationData={animationData} style={{ width: "40%", margin: "auto", height: "30%" }}/>
         <AnimatedForm onSubmit={handleSubmit}>
           <FormInput
             type="text"
