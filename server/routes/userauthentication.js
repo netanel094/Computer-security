@@ -12,19 +12,14 @@ router.post('/', async function (req, res) {
       password,
       con
     );
-    if (!userAuthentication) {
-      return res.status(400).send('User is not found!');
-    }
+    if (!userAuthentication) return res.status(404).send('User is not found!');
 
     const allClients = await allQueries.getAllClients(con);
-    if (!allClients) {
-      return res.status(400).send('No clients found!');
-    } else {
-      res.redirect('/showclients');
-    }
+    if (!allClients) return res.status(404).send('No clients found!');
+    else res.redirect('/showclients');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error User Authentication!');
+    res.status(400).send('Error User Authentication!');
   }
 });
 

@@ -7,13 +7,12 @@ router.post('/', async function (req, res) {
   const { email, old_password, new_password, verification_password } = req.body;
 
   if (new_password !== verification_password)
-    return res.status(400).send('The passwords do not match!');
-    
-  else if (new_password === old_password) {
     return res
       .status(400)
-      .send('The password you entered is your old password!');
-  }
+      .send('The password and the verification password do not match');
+  else if (new_password === old_password)
+    return res.status(400).send('Please enter a password you never used');
+
   const updatedPassword = allQueries.updatePassword(
     email,
     old_password,
@@ -21,10 +20,9 @@ router.post('/', async function (req, res) {
     con
   );
 
-  if (!updatedPassword)
-    return res.status(400).send('Error changing passwords!');
+  if (!updatedPassword) return res.status(400).send('Error changing password!');
 
-  return res.status(200).send('Passwords changed succesfully!');
+  return res.status(200).send('Password changed succesfully!');
 });
 
 module.exports = router;
