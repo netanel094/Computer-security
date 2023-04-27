@@ -1,7 +1,7 @@
 //Checking if email exists in users schema
 const checkUserMail = (mail, con) => {
-  return new Promise((resolve, reject) => {
-    con.query(
+  return new Promise(async (resolve, reject) => {
+    await con.query(
       `SELECT * FROM users_details WHERE email = ?`,
       mail,
       (err, result) => {
@@ -20,18 +20,22 @@ const checkUserMail = (mail, con) => {
 
 //Checking if email exists in clients schema
 const checkClientMail = (mail, con) => {
-  return new Promise((resolve, reject) => {
-    con.query(`SELECT * FROM clients WHERE email = ?`, mail, (err, result) => {
-      if (err) {
-        reject(err);
-      } else if (result.length > 0) {
-        console.log('Email found!!');
-        resolve(true);
-      } else {
-        console.log('Email not found');
-        resolve(false);
+  return new Promise(async (resolve, reject) => {
+    await con.query(
+      `SELECT * FROM clients WHERE email = ?`,
+      mail,
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else if (result.length > 0) {
+          console.log('Email found!!');
+          resolve(true);
+        } else {
+          console.log('Email not found');
+          resolve(false);
+        }
       }
-    });
+    );
   });
 };
 
@@ -219,7 +223,6 @@ const insertPasswordHistory = async (email, password, con) => {
       [email, password, currentDate],
       async (err) => {
         if (err) reject(err);
-        console.log('heeeeeeeeeeeeeeeeeeeeeeeeeeeey');
 
         const BiggerThanThreePassword = await countPasswordInHistory(
           email,
@@ -254,16 +257,14 @@ const insertUser = async (
       console.log('The user already exists');
       resolve(false);
     }
-
     let flag = 0;
 
     await con.query(
       pushUser,
       [email, first_name, last_name, phone_number, password],
       async (err) => {
-        if (err) {
-          reject(err);
-        } else {
+        if (err) reject(err);
+        else {
           flag = 1;
           const insertedPassword = await insertPasswordHistory(
             email,
@@ -309,7 +310,7 @@ const updatePassword = async (email, old_password, new_password, con) => {
     if (userExists) {
       const check = await checkPasswordInHistory(email, new_password, con);
       if (!check) {
-        console.log('Please use a password you never used!');
+        console.log('The password is already used!');
         resolve(false);
       } else {
         const pushPassword = await insertPasswordHistory(
@@ -353,6 +354,28 @@ const sortBy = async (column_name, con) => {
   });
 };
 
+//Search the client by one of his properties
+const searchClient = async (first_name, last_name, city, phone_number, con) => {
+  const q = `SELECT * FROM clients WHERE first_name LIKE ? OR last_name LIKE ? OR city LIKE ? OR phone_number LIKE ?`;
+  const values = [
+    `%${first_name}%`,
+    `%${last_name}%`,
+    `%${city}%`,
+    `%${phone_number}%`,
+  ];
+
+  return new Promise(async (resolve, reject) => {
+    await con.query(q, values, (err, res) => {
+      if (err) reject(err);
+      else if (res.affectedRows === 0) resolve(false);
+      else {
+        console.log(res);
+        resolve(res);
+      }
+    });
+  });
+};
+
 //Exporting all the queries in order to use them
 module.exports = {
   insertUser,
@@ -367,6 +390,7 @@ module.exports = {
   sortBy,
   checkClientMail,
   insertPasswordHistory,
+  searchClient,
 };
 
 //Delete the data from tables! Dont use!!!!
