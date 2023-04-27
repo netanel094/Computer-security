@@ -16,11 +16,12 @@ router.delete('/', async function (req, res) {
       city,
       con
     );
-    if (deletedClient) res.status(200).send('Client removed successfully!');
-    else res.status(400).send('Client is not found!');
+    if (deletedClient)
+      return res.status(200).send('Client removed successfully!');
+    return res.status(404).send('The client is not found!');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error removing client!');
+    res.status(400).send('Error removing client!');
   }
 });
 

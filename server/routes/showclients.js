@@ -7,7 +7,7 @@ router.get('/', async function (req, res) {
   const allClients = await allQueries.getAllClients(con);
 
   if (allClients) return res.status(200).send(allClients);
-  else return res.status(400).send('Clients not found!');
+  else return res.status(404).send('Clients not found!');
 });
 
 module.exports = router;
