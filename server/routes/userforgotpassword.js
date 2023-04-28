@@ -21,7 +21,7 @@ const sendConfirmationEmail = (email, hashedValue) => {
       to: email,
       subject: 'Please confirm your account',
       html: `<h1>Email Confirmation</h1>
-              <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+              <p>Please confirm your email by clicking on the following link</p>
               <a href=https://localhost:3000/changepassword/${hashedValue}> Click here</a>
               </div>`,
     })

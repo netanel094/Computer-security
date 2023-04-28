@@ -1,3 +1,6 @@
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('config.json'));
+
 //Checking if email exists in users schema
 const checkUserMail = (mail, con) => {
   return new Promise(async (resolve, reject) => {
@@ -206,7 +209,7 @@ const countPasswordInHistory = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     await con.query(countPassword, [email], (err, res) => {
       if (err) reject(err);
-      else if (res[0]['count_mail'] > 3) resolve(true);
+      else if (res[0]['count_mail'] > config.password_history) resolve(true);
       else resolve(false);
     });
   });
@@ -296,6 +299,19 @@ const checkPasswordInHistory = (email, password, con) => {
         console.log('User did not use this password!');
         resolve(true);
       }
+    });
+  });
+};
+
+//Search for user password by his email
+const findUserPassword = async (email, con) => {
+  const q = `select password from users_details where email = ?`;
+  const data = [email];
+
+  return new Promise(async (resolve, reject) => {
+    await con.query(q, data, (err, res) => {
+      if (err) reject(err);
+      else resolve(res[0]['password']);
     });
   });
 };
@@ -391,11 +407,10 @@ module.exports = {
   checkClientMail,
   insertPasswordHistory,
   searchClient,
+  findUserPassword,
 };
 
 //Delete the data from tables! Dont use!!!!
-// const con = require('../models/connection_create');
-
 // const remove = async () => {
 //   const q = 'DELETE FROM users_details';
 
@@ -416,3 +431,6 @@ module.exports = {
 //   .catch((err) => {
 //     console.error(err);
 //   });
+
+// const q = `ALTER TABLE users_details ADD is_banned BOOLEAN DEFAULT FALSE;`;
+// con.query(q);
