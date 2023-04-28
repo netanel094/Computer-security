@@ -1,7 +1,10 @@
+const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 const con = require('../models/connection_create');
 const allQueries = require('../models/queries');
+
+const config = JSON.parse(fs.readFileSync('config.json'));
 
 router.post('/', async function (req, res) {
   const { password, email } = req.body;
@@ -14,8 +17,10 @@ router.post('/', async function (req, res) {
     );
     if (!userAuthentication) return res.status(404).send('User is not found!');
 
-    const allClients = await allQueries.getAllClients(con);
-    if (!allClients) return res.status(404).send('No clients found!');
+    const realPassword = await allQueries.findUserPassword(email, con);
+
+    if (password !== realPassword)
+      return res.status(400).send('Password or email are wrong! Try again!');
     else res.redirect('/showclients');
   } catch (error) {
     console.error(error);
