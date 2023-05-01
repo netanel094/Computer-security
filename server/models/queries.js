@@ -392,6 +392,62 @@ const searchClient = async (first_name, last_name, city, phone_number, con) => {
   });
 };
 
+const updateLogins = async (email, con) => {
+  const q = `UPDATE users_details
+  SET logins = logins + 1
+  WHERE email = ?;
+  `;
+  const data = [email];
+  return new Promise(async (resolve, reject) => {
+    await con.query(q, data, (err) => {
+      if (err) reject(false);
+      else {
+        console.log('Updated the logins!');
+        resolve(true);
+      }
+    });
+  });
+};
+
+const resetLogins = async (email, con) => {
+  const q = `update users_details set logins = 0 where email = ?`;
+  const data = [email];
+
+  return new Promise(async (resolve, reject) => {
+    await con.query(q, data, (err) => {
+      if (err) reject(err);
+      else resolve(true);
+    });
+  });
+};
+
+const countLogins = async (email, con) => {
+  const q = `select logins as l from users_details where email = ?`;
+  const data = [email];
+
+  return new Promise(async (resolve, reject) => {
+    await con.query(q, data, (err, res) => {
+      if (err) reject(err);
+      else if (res[0]['l'] > config.login_attempts) resolve(true);
+      else resolve(false);
+    });
+  });
+};
+
+const updateTimeStamp = async (email, con) => {
+  const q = `UPDATE users_details
+  SET created_at = NOW()
+  WHERE email = ?`;
+  const data = email;
+
+  return new Promise(async (resolve, reject) => {
+    await con.query(q, data, (err) => {
+      if (err) reject(err);
+      else resolve(true);
+    });
+  });
+};
+
 //Exporting all the queries in order to use them
 module.exports = {
   insertUser,
@@ -408,6 +464,10 @@ module.exports = {
   insertPasswordHistory,
   searchClient,
   findUserPassword,
+  updateLogins,
+  countLogins,
+  updateTimeStamp,
+  resetLogins,
 };
 
 //Delete the data from tables! Dont use!!!!
