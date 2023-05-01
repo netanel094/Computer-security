@@ -1,7 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import AppBackground from '../../assets/img/AppBackground.png';
 
-
 export const FormContainer = styled.div`
   background-image: url(${AppBackground});
   background-position: center;
@@ -13,10 +12,10 @@ export const FormContainer = styled.div`
 `
 
 export const FormWrapper = styled.div`
+  display: 'flex';
   max-width: 400px;
   width: 100%;
   padding: 30px;
-  display: 'flex';
   background: #fff;
   box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
