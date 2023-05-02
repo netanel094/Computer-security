@@ -448,6 +448,17 @@ const updateTimeStamp = async (email, con) => {
   });
 };
 
+const lastTimeLogin = async (email, con) => {
+  const q = `SELECT created_at from users_details where email = ?`;
+  const data = email;
+  return new Promise(async (resolve, reject) => {
+    await con.query(q, data, (err, res) => {
+      if (err) reject(err);
+      else resolve(res[0]['created_at']);
+    });
+  });
+};
+
 //Exporting all the queries in order to use them
 module.exports = {
   insertUser,
@@ -468,6 +479,7 @@ module.exports = {
   countLogins,
   updateTimeStamp,
   resetLogins,
+  lastTimeLogin,
 };
 
 //Delete the data from tables! Dont use!!!!
