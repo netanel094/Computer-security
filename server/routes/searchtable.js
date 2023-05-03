@@ -6,6 +6,7 @@ const con = require('../models/connection_create');
 router.post('/', async function (req, res) {
   const { first_name, last_name, city, phone_number } = req.body;
 
+  //Searching the client by one one the substrings (email, phone number, first name, last name, city)
   const result = await allQueries.searchClient(
     first_name,
     last_name,

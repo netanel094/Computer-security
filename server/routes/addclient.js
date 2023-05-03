@@ -6,6 +6,7 @@ const con = require('../models/connection_create');
 router.post('/', async function (req, res) {
   const { city, email, first_name, last_name, phone_number } = req.body;
 
+  //Adding a client to the database
   try {
     const clientInserted = await allQueries.insertClient(
       email,
