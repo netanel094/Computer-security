@@ -7,6 +7,7 @@ router.delete('/', async function (req, res) {
   console.log(req.body);
   const { city, email, first_name, last_name, phone_number } = req.body;
 
+  //If the client wants to delete himself
   try {
     const deletedClient = await allQueries.removeClient(
       first_name,
@@ -21,7 +22,7 @@ router.delete('/', async function (req, res) {
     return res.status(404).send('The client is not found!');
   } catch (error) {
     console.error(error);
-    res.status(400).send('Error removing client!');
+    res.status(500).send('Error removing client!');
   }
 });
 
