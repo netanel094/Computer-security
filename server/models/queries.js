@@ -392,6 +392,7 @@ const searchClient = async (first_name, last_name, city, phone_number, con) => {
   });
 };
 
+//Incrementing the logins to logins + 1
 const updateLogins = async (email, con) => {
   const q = `UPDATE users_details
   SET logins = logins + 1
@@ -409,6 +410,7 @@ const updateLogins = async (email, con) => {
   });
 };
 
+//Reseting the logins to 0 after his block is done or he entered the correct password
 const resetLogins = async (email, con) => {
   const q = `update users_details set logins = 0 where email = ?`;
   const data = [email];
@@ -421,6 +423,7 @@ const resetLogins = async (email, con) => {
   });
 };
 
+//Counting the logins in order to check if his logins count is more than allowed
 const countLogins = async (email, con) => {
   const q = `select logins as l from users_details where email = ?`;
   const data = [email];
@@ -428,12 +431,13 @@ const countLogins = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err, res) => {
       if (err) reject(err);
-      else if (res[0]['l'] > config.login_attempts) resolve(true);
+      else if (res[0]['l'] >= config.login_attempts) resolve(true);
       else resolve(false);
     });
   });
 };
 
+//Everytime the user tries to log in and the password is not correct we update the time stamp to the current time
 const updateTimeStamp = async (email, con) => {
   const q = `UPDATE users_details
   SET created_at = NOW()
@@ -448,6 +452,7 @@ const updateTimeStamp = async (email, con) => {
   });
 };
 
+//Getting the last time login of the user in order to check if he is still blocked or not
 const lastTimeLogin = async (email, con) => {
   const q = `SELECT created_at from users_details where email = ?`;
   const data = email;
@@ -459,7 +464,7 @@ const lastTimeLogin = async (email, con) => {
   });
 };
 
-//Exporting all the queries in order to use them
+//Exporting all the queries in order to use them in another file
 module.exports = {
   insertUser,
   removeUser,
