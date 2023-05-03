@@ -6,6 +6,7 @@ const sha1 = require('sha1');
 const con = require('../models/connection_create');
 const nodemailer = require('nodemailer');
 
+//We created an email in order to send a confirmation email to the user
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -20,9 +21,9 @@ const sendConfirmationEmail = (email, hashedValue) => {
       from: process.env.EMAIL,
       to: email,
       subject: 'Please confirm your account',
-      html: `<h1>Email Confirmation</h1>
-              <p>Please confirm your email by clicking on the following link</p>
-              <a href=https://localhost:3000/changepassword/${hashedValue}> Click here</a>
+      html: `<h1>Confirmation Code</h1>
+              <p>Please type the code in the website</p>
+              <a href=https://localhost:3000/changepassword/${hashedValue}></a>
               </div>`,
     })
     .catch((err) => console.log(err));
