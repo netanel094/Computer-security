@@ -4,18 +4,25 @@ const router = express.Router();
 const con = require('../models/connection_create');
 const allQueries = require('../models/queries');
 const config = JSON.parse(fs.readFileSync('config.json'));
+const validator = require('../security/securityFunctions');
 
 router.post('/', async function (req, res) {
   const { password, email } = req.body;
 
+  const newEmail = validator.isValidEmail(email);
+  const newPassword = validator.checkPassword(password);
+
   //Checking if the user exists when he is trying to log in
   try {
     const userAuthentication = await allQueries.checkUserExists(
-      email,
-      password,
+      newEmail,
+      newPassword,
       con
     );
-    if (!userAuthentication) return res.status(404).send('User is not found!');
+    if (!userAuthentication)
+      return res
+        .status(404)
+        .send('Password or email are wrong! Please try again');
 
     //Getting the current time and the last time he tried to log in and checking if his block duration has ended
     const currentTime = new Date();
