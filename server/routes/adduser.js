@@ -6,7 +6,7 @@ const con = require('../models/connection_create');
 router.post('/', async function (req, res) {
   const { password, email, first_name, last_name, phone_number } = req.body;
 
-  const userExists = await allQueries.checkUserExists(email, password);
+  const userExists = await allQueries.checkUserExists(email, con);
   if (userExists) return res.status(400).send('User already exists!');
 
   //Adding a user to the database
@@ -20,12 +20,14 @@ router.post('/', async function (req, res) {
       con
     );
     if (userInserted === false)
-      return res.status(500).send('Some error occured');
+      return res
+        .status(500)
+        .send('Some error occured while inserting the user');
 
     return res.status(200).send('User inserted successfully!');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error adding user!');
+    res.status(500).send('Error!!!');
   }
 });
 

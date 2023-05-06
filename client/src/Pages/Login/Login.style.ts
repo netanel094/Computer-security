@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import AppBackground from '../../assets/img/AppBackground.png';
+import { redirect, Link } from 'react-router-dom';
 
 export const FormContainer = styled.div`
   background-image: url(${AppBackground});
@@ -9,7 +10,7 @@ export const FormContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const FormWrapper = styled.div`
   display: 'flex';
@@ -22,23 +23,23 @@ export const FormWrapper = styled.div`
   text-align: center;
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const HeaderWrapper = styled.div`
- height: 200px;
- justify-content: center;
- align-items: center;
-`
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+`;
 
 export const FormTitle = styled.h2`
   margin-bottom: 20px;
-`
+`;
 
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 
 export const FormInput = styled.input<{ hasError?: boolean }>`
   width: 100%;
@@ -53,12 +54,12 @@ export const FormInput = styled.input<{ hasError?: boolean }>`
     css`
       border: 2px solid red;
     `}
-`
+`;
 
 export const ErrorText = styled.p`
   color: red;
   margin-bottom: 20px;
-`
+`;
 
 export const Button = styled.button`
   width: 100%;
@@ -72,7 +73,7 @@ export const Button = styled.button`
   &:hover {
     background-color: #1e40af;
   }
-`
+`;
 
 export const LinkButton = styled.button`
   background-color: transparent;
@@ -84,9 +85,9 @@ export const LinkButton = styled.button`
   &:hover {
     text-decoration: underline;
   }
-`
+`;
 
-export const RegisterLink = styled.p`
+export const RegisterLink = styled(Link)`
   margin-top: 20px;
   color: #2f55d4;
   cursor: pointer;
@@ -94,7 +95,7 @@ export const RegisterLink = styled.p`
   &:hover {
     text-decoration: underline;
   }
-`
+`;
 
 export const CheckBoxWrapper = styled.div`
   display: flex;
@@ -102,15 +103,15 @@ export const CheckBoxWrapper = styled.div`
   align-items: center;
   width: 100%;
   margin-bottom: 20px;
-`
+`;
 
 export const CheckBoxLabel = styled.label`
   margin-left: 10px;
-`
+`;
 
 export const CheckBoxInput = styled.input`
   margin-right: 10px;
-`
+`;
 
 export const fadeIn = keyframes`
   from {
@@ -120,9 +121,8 @@ export const fadeIn = keyframes`
   to {
     opacity: 1;
   }
-`
+`;
 
 export const AnimatedForm = styled(Form)`
   animation: ${fadeIn} 0.5s ease-in-out;
-`
-
+`;

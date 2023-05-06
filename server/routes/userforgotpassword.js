@@ -5,6 +5,7 @@ const allQueries = require('../models/queries');
 const sha1 = require('sha1');
 const con = require('../models/connection_create');
 const nodemailer = require('nodemailer');
+const validator = require('../security/securityFunctions.js');
 
 //We created an email in order to send a confirmation email to the user
 const transporter = nodemailer.createTransport({
@@ -23,7 +24,7 @@ const sendConfirmationEmail = (email, hashedValue) => {
       subject: 'Please confirm your account',
       html: `<h1>Confirmation Code</h1>
               <p>Please type the code in the website</p>
-              <a href=https://localhost:3000/changepassword/${hashedValue}></a>
+              <p>${hashedValue}</p>
               </div>`,
     })
     .catch((err) => console.log(err));
@@ -33,7 +34,8 @@ router.post('/', async function (req, res) {
   const code = Math.floor(Math.random() * 1000000);
   const hashedValue = sha1(code);
   const { email } = req.body;
-  const userExists = await allQueries.checkUserMail(email, con);
+  const newEmail = validator.isValidEmail(email);
+  const userExists = await allQueries.checkUserMail(newEmail, con);
 
   if (userExists) {
     sendConfirmationEmail(email, hashedValue);
