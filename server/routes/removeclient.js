@@ -2,18 +2,21 @@ const express = require('express');
 const router = express.Router();
 const allQueries = require('../models/queries');
 const con = require('../models/connection_create');
+const validator = require('../security/securityFunctions');
 
 router.delete('/', async function (req, res) {
-  console.log(req.body);
   const { city, email, first_name, last_name, phone_number } = req.body;
+
+  const newEmail = validator.isValidEmail(email);
+  const newPhoneNumber = validator.checkPhone(phone_number);
 
   //If the client wants to delete himself
   try {
     const deletedClient = await allQueries.removeClient(
       first_name,
       last_name,
-      email,
-      phone_number,
+      newEmail,
+      newPhoneNumber,
       city,
       con
     );
