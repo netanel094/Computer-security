@@ -43,17 +43,19 @@ const checkClientMail = (mail, con) => {
 };
 
 //Checking if the user exists by his email and password
-const checkUserExists = async (email, password, con) => {
+const checkUserExists = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     await con.query(
-      `SELECT * FROM users_details WHERE email = ? and password = ?`,
-      [email, password],
+      `SELECT * FROM users_details WHERE email = ?`,
+      [email],
       (err, result) => {
+        console.log('heyyy' + result.length);
         if (err) {
           console.log(err);
           reject(err);
-        } else if (result.affectedRows === 0) resolve(false);
-        else resolve(true);
+        } else if (result.length === 0) {
+          resolve(false);
+        } else resolve(true);
       }
     );
   });

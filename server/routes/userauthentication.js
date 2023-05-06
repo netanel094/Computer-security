@@ -3,22 +3,18 @@ const express = require('express');
 const router = express.Router();
 const con = require('../models/connection_create');
 const allQueries = require('../models/queries');
-const config = JSON.parse(fs.readFileSync('config.json'));
-const validator = require('../security/securityFunctions');
+const config = require('../config.json');
+const validator = require('../security/securityFunctions.js');
 
 router.post('/', async function (req, res) {
   const { password, email } = req.body;
 
-  const newEmail = validator.isValidEmail(email);
-  const newPassword = validator.checkPassword(password);
+  //const newEmail = validator.isValidEmail(email);
+  //const newPassword = validator.checkPassword(password);
 
   //Checking if the user exists when he is trying to log in
   try {
-    const userAuthentication = await allQueries.checkUserExists(
-      newEmail,
-      newPassword,
-      con
-    );
+    const userAuthentication = await allQueries.checkUserExists(email, con);
     if (!userAuthentication)
       return res
         .status(404)
@@ -36,7 +32,9 @@ router.post('/', async function (req, res) {
         .status(400)
         .send('You have attempted too many times. Try again later!');
       //If the block duration has passed we reset the logins back to 0
-    } else if (countLogins && timeDiff > config.block_duration) await allQueries.resetLogins(email, con);
+    }
+    if (countLogins && timeDiff > config.block_duration)
+      await allQueries.resetLogins(email, con);
 
     //Checking if the user entered his real passsword
     const realPassword = await allQueries.findUserPassword(email, con);
@@ -57,7 +55,7 @@ router.post('/', async function (req, res) {
         .send('Password or email are wrong! Please try again');
     } else {
       await allQueries.resetLogins(email, con);
-      res.redirect('/showclients');
+      res.status(200).send('Login Success!');
     }
   } catch (error) {
     console.error(error);

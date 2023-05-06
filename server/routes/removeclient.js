@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const allQueries = require('../models/queries');
 const con = require('../models/connection_create');
-const validator = require('../security/securityFunctions');
+const validator = require('../security/securityFunctions.js');
 
 router.delete('/', async function (req, res) {
   const { city, email, first_name, last_name, phone_number } = req.body;

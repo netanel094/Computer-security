@@ -5,7 +5,7 @@ const allQueries = require('../models/queries');
 const sha1 = require('sha1');
 const con = require('../models/connection_create');
 const nodemailer = require('nodemailer');
-const validator = require('../security/securityFunctions');
+const validator = require('../security/securityFunctions.js');
 
 //We created an email in order to send a confirmation email to the user
 const transporter = nodemailer.createTransport({

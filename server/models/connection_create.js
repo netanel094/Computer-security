@@ -1,27 +1,23 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
-const Password = process.env.DB_PASSWORD;
-const userName = process.env.DB_USERNAME;
-const dbHost = process.env.DB_HOST;
-const dbName = process.env.DB_NAME;
-
 // Create a connection to the MySQL server
 const connectionPromise = mysql.createConnection({
-  host: dbHost,
-  user: userName,
-  password: Password,
-  database: dbName,
+  host: 'localhost',
+  user: 'root',
+  password: 'abcd',
+  database: 'communication_ltd',
+});
+
+connectionPromise.on('error', (err) => {
+  console.error(`Error connecting to MySQL server: ${err}`);
 });
 
 const checkConnection = async (con) => {
   return new Promise((resolve, reject) => {
     con.connect((err) => {
-      if (err) {
-        resolve(false);
-      } else {
-        resolve(true);
-      }
+      if (err) resolve(false);
+      else resolve(true);
     });
   });
 };
