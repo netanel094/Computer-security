@@ -311,7 +311,7 @@ const findUserPassword = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err, res) => {
       if (err) reject(err);
-      else resolve(res[0]['password']);
+      else resolve(res[0].password);
     });
   });
 };
@@ -371,24 +371,25 @@ const sortBy = async (column_name, con) => {
 };
 
 //Search the client by one of his properties
-const searchClient = async (first_name, last_name, city, phone_number, con) => {
-  const q = `SELECT * FROM clients WHERE first_name LIKE ? OR last_name LIKE ? OR city LIKE ? OR phone_number LIKE ?`;
-  const values = [
-    `%${first_name}%`,
-    `%${last_name}%`,
-    `%${city}%`,
-    `%${phone_number}%`,
-  ];
-
-  return new Promise(async (resolve, reject) => {
-    await con.query(q, values, (err, res) => {
-      if (err) reject(err);
-      else if (res.affectedRows === 0) resolve(false);
-      else {
-        console.log(res);
-        resolve(res);
+const searchClient = async (search_string, con) => {
+  const search = `SELECT * FROM clients WHERE email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ? OR city LIKE ?`;
+  return new Promise((resolve, reject) => {
+    con.query(
+      search,
+      [
+        `%${search_string}%`,
+        `%${search_string}%`,
+        `%${search_string}%`,
+        `%${search_string}%`,
+        `%${search_string}%`,
+      ],
+      (err, result) => {
+        if (err) {
+          console.log('Something went wrong', err);
+          return resolve(false);
+        } else return resolve(result);
       }
-    });
+    );
   });
 };
 
