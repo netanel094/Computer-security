@@ -1,5 +1,5 @@
 {
-  "block_duration": 15,
+  "block_duration": 1,
   "login_attempts": 3,
   "password_history": 3
 }
