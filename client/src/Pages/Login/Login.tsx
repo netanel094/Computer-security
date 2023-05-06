@@ -11,9 +11,11 @@ import {
   CheckBoxWrapper,
   CheckBoxInput,
   CheckBoxLabel,
-  LinkButton
+  LinkButton,
+  RegisterLink
  } from "./Login.style"
 import Lottie from 'lottie-react'
+import { useNavigate } from "react-router-dom";
 import animationData from '../../assets/lottie/helloLogin.json';
 
 
@@ -22,6 +24,7 @@ const Login : FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,7 +32,10 @@ const Login : FC = () => {
       setError('Please enter username and password');
     } else {
       setError('');
-      console.log(`Submitted username: ${username}, password: ${password}, rememberMe: ${rememberMe}`);
+      navigate("/System")
+      // fetch
+      // in the fetch use navigate("/System") if the login is succ
+      
     }
   };
 
@@ -39,7 +45,13 @@ const Login : FC = () => {
 
   const handleForgotPassword = () => {
     console.log('Forgot password button clicked');
+    navigate("/ForgotPassword");
+    
   };
+
+  const handleRegister = () => {
+    navigate("/RegisterPage");
+  }
 
   return (
     <FormContainer>
@@ -71,6 +83,9 @@ const Login : FC = () => {
           <Button type="submit">Login</Button>
         </AnimatedForm>
         <LinkButton onClick={handleForgotPassword}>Forgot password?</LinkButton>
+        <LinkButton>
+          <RegisterLink onClick={handleRegister}>Don't have an account? press here</RegisterLink>
+        </LinkButton>
       </FormWrapper>
     </FormContainer>
   );

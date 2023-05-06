@@ -86,6 +86,16 @@ export const LinkButton = styled.button`
   }
 `
 
+export const RegisterLink = styled.p`
+  margin-top: 20px;
+  color: #2f55d4;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
 export const CheckBoxWrapper = styled.div`
   display: flex;
   justify-content: flex-start;

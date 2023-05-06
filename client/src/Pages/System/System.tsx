@@ -56,6 +56,7 @@ const System = () => {
     });
   };
 
+  
   const handleAddCustomer = () => {
     setCustomers([...customers, newCustomer]);
     setNewCustomer({
@@ -130,9 +131,49 @@ const System = () => {
                 Last Name {sortBy === 'lastName' && (sortOrder === 'asc' ? '↑' : '↓')}
               </SortButton>
             </th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Address</th>
+            <th>
+              <SortButton
+                active={sortBy === 'email'}
+                onClick={() => {
+                  if (sortBy === 'email') {
+                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortBy('email');
+                    setSortOrder('asc');
+                  }
+                }}
+              >
+                Email {sortBy === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </SortButton>
+            </th>
+            <th>
+              <SortButton
+                active={sortBy === 'phoneNumber'}
+                onClick={() => {
+                  if (sortBy === 'phoneNumber') {
+                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortBy('phoneNumber');
+                    setSortOrder('asc');
+                  }
+                }}>
+                phone Number {sortBy === 'phoneNumber' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </SortButton>
+            </th>
+            <th>
+              <SortButton
+                active={sortBy === 'address'}
+                onClick={() => {
+                  if (sortBy === 'address') {
+                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortBy('address');
+                    setSortOrder('asc');
+                  }
+                }}>
+                Address {sortBy === 'address' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </SortButton>
+            </th>
             <th></th>
           </tr>
         </thead>

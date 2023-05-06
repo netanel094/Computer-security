@@ -20,8 +20,10 @@ export const WelcomeText = styled.h1`
 `;
 
 export const SearchBar = styled.input`
-  width: 100%;
+  width: 50%;
   padding: 10px;
+  display: flex;
+  align-self: flex-start;
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -72,7 +74,8 @@ export const AddCustomerButton = styled.button`
   padding: 10px;
   border-radius: 4px;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 30px;
+  margin-bottom: 10px;
 `;
 
 export const AddCustomerModal = styled.div`
@@ -81,7 +84,7 @@ export const AddCustomerModal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  padding: 20px;
+  padding: 50px;
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 999;
