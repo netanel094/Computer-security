@@ -252,9 +252,10 @@ const insertUser = async (
   last_name,
   phone_number,
   password,
+  city,
   con
 ) => {
-  const pushUser = `INSERT INTO users_details (email,first_name,last_name,phone_number,password) VALUES (?, ?, ?, ?, ?)`;
+  const pushUser = `INSERT INTO users_details (email,first_name,last_name,phone_number,password,city) VALUES (?, ?, ?, ?, ?, ?)`;
   const emailExists = await checkUserMail(email, con);
 
   return new Promise(async (resolve, reject) => {
@@ -266,7 +267,7 @@ const insertUser = async (
 
     await con.query(
       pushUser,
-      [email, first_name, last_name, phone_number, password],
+      [email, first_name, last_name, phone_number, password, city],
       async (err) => {
         if (err) reject(err);
         else {
