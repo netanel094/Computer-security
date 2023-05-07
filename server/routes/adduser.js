@@ -4,7 +4,8 @@ const allQueries = require('../models/queries');
 const con = require('../models/connection_create');
 
 router.post('/', async function (req, res) {
-  const { password, email, first_name, last_name, phone_number } = req.body;
+  const { password, email, first_name, last_name, phone_number, city } =
+    req.body;
 
   const userExists = await allQueries.checkUserExists(email, con);
   if (userExists) return res.status(400).send('User already exists!');
@@ -17,6 +18,7 @@ router.post('/', async function (req, res) {
       last_name,
       phone_number,
       password,
+      city,
       con
     );
     if (userInserted === false)
