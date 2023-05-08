@@ -24,6 +24,7 @@ const Login: FC = () => {
   const [error, setError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (username === '' || password === '') {
@@ -39,6 +40,7 @@ const Login: FC = () => {
       // .then((res) => console.log(res))
       // .catch((err) => console.log(err));
     }
+    navigate('/System')
   };
 
   const handleRememberMe = () => {

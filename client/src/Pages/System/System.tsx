@@ -6,9 +6,10 @@ import {
      Table,
      SortButton,
      DeleteButton,
-     AddCustomerButton,
+     Button,
      AddCustomerModal,
-     AddCustomerModalButtons } from './System.style'
+     AddCustomerModalButtons, 
+     Container } from './System.style'
 
 interface Customer {
   name: string;
@@ -48,6 +49,7 @@ const System = () => {
   const [sortBy, setSortBy] = useState<keyof Customer>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [showAddCustomer, setShowAddCustomer] = useState<boolean>(false);
+  const [changePassword, setChangePassword] = useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCustomer({
@@ -93,12 +95,18 @@ const System = () => {
   return (
     <SystemContainer>
       <WelcomeText>Hello, User</WelcomeText>
-      <SearchBar
-        type="text"
-        placeholder="Search customers..."
-        value={searchQuery}
-        onChange={handleSearch}
-      />
+      <Container>
+
+        <SearchBar
+          type="text"
+          placeholder="Search customers..."
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+        <Button onClick={() => setChangePassword(true)}>Change Password</Button>
+        <Button onClick={() => setShowAddCustomer(true)}>Add Customer</Button>
+
+      </Container>
       <Table>
         <thead>
           <tr>
@@ -192,7 +200,6 @@ const System = () => {
           ))}
         </tbody>
         </Table>
-        <AddCustomerButton onClick={() => setShowAddCustomer(true)}>Add Customer</AddCustomerButton>
         {showAddCustomer && (
             <AddCustomerModal>
             <h2>Add Customer</h2>
