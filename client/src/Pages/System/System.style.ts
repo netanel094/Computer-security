@@ -1,11 +1,9 @@
 import styled from 'styled-components';
 import AppBackground from '../../assets/img/AppBackground.png';
-import { AiOutlineSearch } from 'react-icons/ai';
 
 export const SystemContainer = styled.div`
   background-image: url(${AppBackground});
   width: 100%;
-  min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
   display: flex;
@@ -17,13 +15,22 @@ export const SystemContainer = styled.div`
 export const WelcomeText = styled.h1`
   font-size: 2em;
   margin-bottom: 20px;
+  color: #fff;
 `;
 
+export const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  
+`
+
 export const SearchBar = styled.input`
-  width: 50%;
+  width: 40%;
   padding: 10px;
   display: flex;
-  align-self: flex-start;
+  align-self: center;
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -38,10 +45,12 @@ export const Table = styled.table`
     padding: 10px;
     border: 1px solid #ccc;
     text-align: left;
+    color: #fff;
   }
 
   th {
     font-weight: bold;
+    color: #fff;
   }
 `;
 
@@ -49,12 +58,13 @@ export const SortButton = styled.button<{ active: boolean }>`
   display: flex;
   align-items: center;
   font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
-  background-color: ${({ active }) => (active ? '#eee' : 'transparent')};
+  background-color: ${({ active }) => (active ? '#000' : 'transparent')};
   border: none;
   cursor: pointer;
+  color: #fff;
 
   &:hover {
-    background-color: #eee;
+    background-color: #000;
   }
 `;
 
@@ -67,15 +77,15 @@ export const DeleteButton = styled.button`
   cursor: pointer;
 `;
 
-export const AddCustomerButton = styled.button`
+export const Button = styled.button`
   background-color: #2ecc71;
   color: white;
   border: none;
   padding: 10px;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 30px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
 `;
 
 export const AddCustomerModal = styled.div`
