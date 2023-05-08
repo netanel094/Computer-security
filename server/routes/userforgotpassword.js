@@ -1,11 +1,11 @@
 const express = require('express');
 require('dotenv').config();
 const router = express.Router();
-const allQueries = require('../models/queries');
 const sha1 = require('sha1');
 const con = require('../models/connection_create');
 const nodemailer = require('nodemailer');
-const validator = require('../security/securityFunctions.js');
+const allQueries = require('../models/queries');
+const security = require('../security/securityFunctions');
 
 //We created an email in order to send a confirmation email to the user
 const transporter = nodemailer.createTransport({
@@ -34,13 +34,16 @@ router.post('/', async function (req, res) {
   const code = Math.floor(Math.random() * 1000000);
   const hashedValue = sha1(code);
   const { email } = req.body;
-  const newEmail = validator.isValidEmail(email);
-  const userExists = await allQueries.checkUserMail(newEmail, con);
+  if (!security.isValidEmail(email))
+    return res.status(400).send('The email is not valid!');
+
+  const userExists = await allQueries.checkUserExists(email, con);
 
   if (userExists) {
     sendConfirmationEmail(email, hashedValue);
     return res.status(200).send('Sent the code check the email please');
-  } else res.status(404).send('Error user does not exist!');
+  }
+  return res.status(404).send('Error user does not exist!');
 });
 
 module.exports = router;
