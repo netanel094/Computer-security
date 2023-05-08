@@ -14,7 +14,7 @@ export const SystemContainer = styled.div`
 
 export const WelcomeText = styled.h1`
   font-size: 2em;
-  margin-bottom: 20px;
+  margin-bottom: 21px;
   color: #fff;
 `;
 
