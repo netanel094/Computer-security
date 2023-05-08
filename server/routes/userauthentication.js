@@ -4,13 +4,13 @@ const router = express.Router();
 const con = require('../models/connection_create');
 const allQueries = require('../models/queries');
 const config = require('../config.json');
-const validator = require('../security/securityFunctions.js');
+const security = require('../security/securityFunctions');
 
 router.post('/', async function (req, res) {
   const { password, email } = req.body;
 
-  //const newEmail = validator.isValidEmail(email);
-  //const newPassword = validator.checkPassword(password);
+  if (!security.isValidEmail(email) || !security.checkPassword(password))
+    return res.status(400).send('Email or password are not valid!');
 
   //Checking if the user exists when he is trying to log in
   try {
@@ -55,7 +55,7 @@ router.post('/', async function (req, res) {
         .send('Password or email are wrong! Please try again');
     } else {
       await allQueries.resetLogins(email, con);
-      res.status(200).send('Login Success!');
+      res.status(200).send('Login succeeded');
     }
   } catch (error) {
     console.error(error);

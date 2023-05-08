@@ -49,7 +49,6 @@ const checkUserExists = async (email, con) => {
       `SELECT * FROM users_details WHERE email = ?`,
       [email],
       (err, result) => {
-        console.log('heyyy' + result.length);
         if (err) {
           console.log(err);
           reject(err);
@@ -120,14 +119,7 @@ const getAllClients = async (con) => {
 };
 
 //Removing the client from the database
-const removeClient = async (
-  first_name,
-  last_name,
-  email,
-  phone_number,
-  city,
-  con
-) => {
+const removeClient = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     const checkMail = await checkClientMail(email, con);
     if (!checkMail) {
@@ -135,8 +127,8 @@ const removeClient = async (
       resolve(false);
     } else {
       con.query(
-        'DELETE FROM clients WHERE first_name = ? AND last_name = ? AND email = ? AND phone_number = ? AND city = ?',
-        [first_name, last_name, email, phone_number, city],
+        'DELETE FROM clients WHERE email = ?',
+        [email],
         (error, result) => {
           if (error) reject(error);
           else {
@@ -252,9 +244,10 @@ const insertUser = async (
   last_name,
   phone_number,
   password,
+  city,
   con
 ) => {
-  const pushUser = `INSERT INTO users_details (email,first_name,last_name,phone_number,password) VALUES (?, ?, ?, ?, ?)`;
+  const pushUser = `INSERT INTO users_details (email,first_name,last_name,phone_number,password,city) VALUES (?, ?, ?, ?, ?, ?)`;
   const emailExists = await checkUserMail(email, con);
 
   return new Promise(async (resolve, reject) => {
@@ -266,7 +259,7 @@ const insertUser = async (
 
     await con.query(
       pushUser,
-      [email, first_name, last_name, phone_number, password],
+      [email, first_name, last_name, phone_number, password, city],
       async (err) => {
         if (err) reject(err);
         else {
@@ -324,7 +317,7 @@ const updatePassword = async (email, old_password, new_password, con) => {
     'UPDATE users_details SET password = ? WHERE email = ? AND password = ?';
 
   return new Promise(async (resolve, reject) => {
-    const userExists = await checkUserExists(email, old_password, con);
+    const userExists = await checkUserExists(email, con);
     if (userExists) {
       const check = await checkPasswordInHistory(email, new_password, con);
       if (!check) {

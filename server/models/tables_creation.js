@@ -20,11 +20,17 @@
 //   if (err) throw err;
 // });
 
-// let sql_users_table =
-//   'CREATE TABLE IF NOT EXISTS ' +
-//   dbName +
-//   '.users_details' +
-//   '(`email` VARCHAR(50) NOT NULL, `first_name` VARCHAR(45) NOT NULL, `last_name` VARCHAR(45) NOT NULL, `phone_number` VARCHAR(10) NOT NULL, `password` VARCHAR(128) NOT NULL, `logins` int NOT NULL DEFAULT 0, `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(`email`))';
+// let sql_users_table = `CREATE TABLE IF NOT EXISTS ${dbName}.users_details (
+//   email VARCHAR(50) NOT NULL,
+//   first_name VARCHAR(45) NOT NULL,
+//   last_name VARCHAR(45) NOT NULL,
+//   phone_number VARCHAR(10) NOT NULL,
+//   password VARCHAR(128) NOT NULL,
+//   logins int NOT NULL DEFAULT 0,
+//   city VARCHAR(50) NOT NULL,
+//   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//   PRIMARY KEY (email)
+// )`;
 
 // con.query(sql_users_table, function (err) {
 //   if (err) throw err;
