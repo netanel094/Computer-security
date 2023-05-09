@@ -1,142 +1,113 @@
 import React, { useState } from 'react';
 import {
-     SystemContainer,
-     WelcomeText,
-     SearchBar,
-     Table,
-     SortButton,
-     DeleteButton,
-     Button,
-     AddCustomerModal,
-     AddCustomerModalButtons, 
-     Container } from './System.style'
+  SystemContainer,
+  WelcomeText,
+  SearchBar,
+  Table,
+  SortButton,
+  DeleteButton,
+  Button,
+  AddCustomerModal,
+  AddCustomerModalButtons,
+  Container,
+} from './System.style';
+import useCustomers from '../../hooks/useCustomers';
 
 interface Customer {
-  name: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  phoneNumber: string;
-  address: string;
+  phone_number: string;
+  city: string;
 }
 
-const initialCustomers: Customer[] = [
-  {
-    name: 'John',
-    lastName: 'Doe',
-    email: 'johndoe@example.com',
-    phoneNumber: '555-1234',
-    address: '123 Main St'
-  },
-  {
-    name: 'Jane',
-    lastName: 'Doe',
-    email: 'janedoe@example.com',
-    phoneNumber: '555-5678',
-    address: '456 Maple Ave'
-  }
-];
-
 const System = () => {
-  const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
-  const [newCustomer, setNewCustomer] = useState<Customer>({
-    name: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    address: ''
-  });
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [sortBy, setSortBy] = useState<keyof Customer>('name');
+  const [sortBy, setSortBy] = useState<keyof Customer>('first_name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const { customers, setSearch, deleteCustomer } = useCustomers({
+    sortBy,
+    sortOrder,
+  });
+  const [newCustomer, setNewCustomer] = useState<Customer>({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone_number: '',
+    city: '',
+  });
   const [showAddCustomer, setShowAddCustomer] = useState<boolean>(false);
   const [changePassword, setChangePassword] = useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setNewCustomer({
       ...newCustomer,
-      [e.target.name]: e.target.value
+      [name]: value,
     });
   };
 
-  
   const handleAddCustomer = () => {
-    setCustomers([...customers, newCustomer]);
+    //setCustomers([...customers, newCustomer]);
     setNewCustomer({
-      name: '',
-      lastName: '',
+      first_name: '',
+      last_name: '',
       email: '',
-      phoneNumber: '',
-      address: ''
+      phone_number: '',
+      city: '',
     });
     setShowAddCustomer(false);
   };
 
-  const handleDeleteCustomer = (index: number) => {
-    const newCustomers = [...customers];
-    newCustomers.splice(index, 1);
-    setCustomers(newCustomers);
-  };
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    setSearch(e.target.value);
   };
-
-  const filteredCustomers = customers.filter(customer =>
-    Object.values(customer).some(value =>
-      value.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
-
-  const sortedCustomers = filteredCustomers.sort((a, b) => {
-    const compare = a[sortBy].localeCompare(b[sortBy]);
-    return sortOrder === 'asc' ? compare : -compare;
-  });
 
   return (
     <SystemContainer>
       <WelcomeText>Hello, User</WelcomeText>
       <Container>
-
         <SearchBar
           type="text"
           placeholder="Search customers..."
-          value={searchQuery}
           onChange={handleSearch}
         />
+
         <Button onClick={() => setChangePassword(true)}>Change Password</Button>
         <Button onClick={() => setShowAddCustomer(true)}>Add Customer</Button>
-
       </Container>
       <Table>
         <thead>
           <tr>
             <th>
               <SortButton
-                active={sortBy === 'name'}
+                active={sortBy === 'first_name'}
                 onClick={() => {
-                  if (sortBy === 'name') {
+                  if (sortBy === 'first_name') {
                     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                   } else {
-                    setSortBy('name');
+                    setSortBy('first_name');
                     setSortOrder('asc');
                   }
                 }}
               >
-                Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Name{' '}
+                {sortBy === 'first_name' && (sortOrder === 'asc' ? '↑' : '↓')}
               </SortButton>
             </th>
             <th>
               <SortButton
-                active={sortBy === 'lastName'}
+                active={sortBy === 'last_name'}
                 onClick={() => {
-                  if (sortBy === 'lastName') {
+                  if (sortBy === 'last_name') {
                     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                   } else {
-                    setSortBy('lastName');
+                    setSortBy('last_name');
                     setSortOrder('asc');
                   }
-                }}>
-                Last Name {sortBy === 'lastName' && (sortOrder === 'asc' ? '↑' : '↓')}
+                }}
+              >
+                Last Name{' '}
+                {sortBy === 'last_name' && (sortOrder === 'asc' ? '↑' : '↓')}
               </SortButton>
             </th>
             <th>
@@ -156,65 +127,100 @@ const System = () => {
             </th>
             <th>
               <SortButton
-                active={sortBy === 'phoneNumber'}
+                active={sortBy === 'phone_number'}
                 onClick={() => {
-                  if (sortBy === 'phoneNumber') {
+                  if (sortBy === 'phone_number') {
                     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                   } else {
-                    setSortBy('phoneNumber');
+                    setSortBy('phone_number');
                     setSortOrder('asc');
                   }
-                }}>
-                phone Number {sortBy === 'phoneNumber' && (sortOrder === 'asc' ? '↑' : '↓')}
+                }}
+              >
+                phone Number{' '}
+                {sortBy === 'phone_number' && (sortOrder === 'asc' ? '↑' : '↓')}
               </SortButton>
             </th>
             <th>
               <SortButton
-                active={sortBy === 'address'}
+                active={sortBy === 'city'}
                 onClick={() => {
-                  if (sortBy === 'address') {
+                  if (sortBy === 'city') {
                     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                   } else {
-                    setSortBy('address');
+                    setSortBy('city');
                     setSortOrder('asc');
                   }
-                }}>
-                Address {sortBy === 'address' && (sortOrder === 'asc' ? '↑' : '↓')}
+                }}
+              >
+                Address {sortBy === 'city' && (sortOrder === 'asc' ? '↑' : '↓')}
               </SortButton>
             </th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {sortedCustomers.map((customer, index) => (
+          {customers.map((customer, index) => (
             <tr key={index}>
-              <td>{customer.name}</td>
-              <td>{customer.lastName}</td>
+              <td>{customer.first_name}</td>
+              <td>{customer.last_name}</td>
               <td>{customer.email}</td>
-              <td>{customer.phoneNumber}</td>
-              <td>{customer.address}</td>
+              <td>{customer.phone_number}</td>
+              <td>{customer.city}</td>
               <td>
-                <DeleteButton onClick={() => handleDeleteCustomer(index)}>Delete</DeleteButton>
+                <DeleteButton onClick={() => deleteCustomer(customer.email)}>
+                  Delete
+                </DeleteButton>
               </td>
             </tr>
           ))}
         </tbody>
-        </Table>
-        {showAddCustomer && (
-            <AddCustomerModal>
-            <h2>Add Customer</h2>
-            <input type="text" name="name" placeholder="Name" value={newCustomer.name} onChange={handleInputChange} />
-            <input type="text" name="lastName" placeholder="Last Name" value={newCustomer.lastName} onChange={handleInputChange} />
-            <input type="email" name="email" placeholder="Email" value={newCustomer.email} onChange={handleInputChange} />
-            <input type="tel" name="phoneNumber" placeholder="Phone Number" value={newCustomer.phoneNumber} onChange={handleInputChange} />
-            <input type="text" name="address" placeholder="Address" value={newCustomer.address} onChange={handleInputChange} />
-            <AddCustomerModalButtons>
-                <button onClick={() => setShowAddCustomer(false)}>Cancel</button>
-                <button onClick={handleAddCustomer}>Add</button>
-            </AddCustomerModalButtons>
-            </AddCustomerModal>
-        )}
-        </SystemContainer>
+      </Table>
+      {showAddCustomer && (
+        <AddCustomerModal>
+          <h2>Add Customer</h2>
+          <input
+            type="text"
+            name="first_name"
+            placeholder="Name"
+            value={newCustomer.first_name}
+            onChange={handleInputChange}
+          />
+          <input
+            type="text"
+            name="last_name"
+            placeholder="Last Name"
+            value={newCustomer.last_name}
+            onChange={handleInputChange}
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={newCustomer.email}
+            onChange={handleInputChange}
+          />
+          <input
+            type="tel"
+            name="phone_number"
+            placeholder="Phone Number"
+            value={newCustomer.phone_number}
+            onChange={handleInputChange}
+          />
+          <input
+            type="text"
+            name="city"
+            placeholder="Address"
+            value={newCustomer.city}
+            onChange={handleInputChange}
+          />
+          <AddCustomerModalButtons>
+            <button onClick={() => setShowAddCustomer(false)}>Cancel</button>
+            <button onClick={handleAddCustomer}>Add</button>
+          </AddCustomerModalButtons>
+        </AddCustomerModal>
+      )}
+    </SystemContainer>
   );
 };
 
