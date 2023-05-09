@@ -1,10 +1,7 @@
 var tls = require('tls');
 var https = require('https');
-var path = require('path');
 var fs = require('fs');
 var app = require('../app');
-var debug = require('debug')('server:server');
-var http = require('http');
 
 const options = {
   port: 443,
@@ -16,9 +13,6 @@ const options = {
   ),
   minVersion: tls.Server.TLSv1_2_method,
 };
-
-//var port = normalizePort(process.env.PORT || '3000');
-//app.set('port', port);
 
 const server = https.createServer(options, app);
 

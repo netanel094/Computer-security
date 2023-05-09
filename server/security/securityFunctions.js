@@ -1,4 +1,5 @@
 const config = require('../config.json');
+const validator = require('validator');
 
 const isValidEmail = (email) => {
   let emailRegex =
@@ -33,11 +34,13 @@ const checkPassword = (password) => {
 };
 
 const checkPhone = (phoneNumber) => {
-  let phoneRegEx = /^[0-9]{9}$/;
+  let phoneRegEx = /^[0-9]{10}$/;
   return phoneRegEx.test(phoneNumber);
 };
 
 const inputValidate = (userInput) => {
+  if (userInput === '') return true;
+
   return validator.escape(userInput);
 };
 

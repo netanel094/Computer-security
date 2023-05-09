@@ -1,52 +1,76 @@
-import React, { FC, useState } from "react";
-import {
-  Container,
-  Form,
-  Input,
-  ErrorMessage,
-  Button,
-  PasswordRequirements
-} from './Register.style'
+import React, { FC, useState } from 'react';
+import { Container, Form, Input, ErrorMessage, Button } from './Register.style';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register: FC = () => {
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [address, setAddress] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
+  const navigate = useNavigate();
+  const [message, setMessage] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
   const [isValid, setIsValid] = useState(true);
+  // const test = async () => {
+  //   const response = await axios.get('https://localhost:8080/api/test');
+  //   console.log(response);
+  // };
+
+  // window.test = test;
 
   const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-  }
+  };
 
   const validatePhone = (phone: string): boolean => {
     const re = /^[0-9]{10}$/;
     return re.test(phone);
-  }
+  };
 
   const validatePassword = (password: string): boolean => {
     const re = /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/;
     return re.test(password);
-  }
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    console.log('submit started!');
     if (password !== repeatPassword) {
-      setIsValid(false);
-      return;
+      return setIsValid(false);
     }
+    console.log('repeat password valid');
 
-    if (!validateEmail(email) || !validatePhone(phoneNumber) || !validatePassword(password)) {
-      setIsValid(false);
-      return;
-    }
+    if (!validateEmail(email)) return setIsValid(false);
+    console.log('email passed');
 
-    // handle form submission
+    if (!validatePhone(phoneNumber)) return setIsValid(false);
+    console.log('phone number passed');
+
+    if (!validatePassword(password)) return setIsValid(false);
+    console.log('password passed');
+
+    axios
+      .post('https://localhost:8080/api/adduser', {
+        password,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        phone_number: phoneNumber,
+        city: address,
+      })
+      .then((res) => {
+        console.log(res);
+        setMessage(res.data);
+        navigate('/');
+      })
+      .catch((err) => {
+        console.log(err);
+        setMessage(err.response.data);
+      });
   };
 
   return (
@@ -55,8 +79,8 @@ const Register: FC = () => {
         <Input
           type="text"
           placeholder="Name"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
+          value={firstName}
+          onChange={(event) => setFirstName(event.target.value)}
           required
         />
         <Input
@@ -108,9 +132,10 @@ const Register: FC = () => {
         />
         {!isValid && <ErrorMessage>Please fix the errors above</ErrorMessage>}
         <Button type="submit">Register</Button>
+        {message}
       </Form>
     </Container>
   );
-}
+};
 
 export default Register;

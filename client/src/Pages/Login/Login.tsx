@@ -40,7 +40,7 @@ const Login: FC = () => {
       // .then((res) => console.log(res))
       // .catch((err) => console.log(err));
     }
-    navigate('/System')
+    navigate('/System');
   };
 
   const handleRememberMe = () => {

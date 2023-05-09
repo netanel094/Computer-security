@@ -37,7 +37,7 @@ router.post('/', async function (req, res) {
         .status(500)
         .send('Some error occured while inserting the user');
 
-    return res.status(200).send('User inserted successfully!');
+    return res.status(200).send('Signed up succesfully');
   } catch (error) {
     console.error(error);
     res.status(500).send('Error!!!');

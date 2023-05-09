@@ -8,14 +8,13 @@ const checkUserMail = (mail, con) => {
       `SELECT * FROM users_details WHERE email = ?`,
       mail,
       (err, result) => {
-        if (err) reject(err);
-        else if (result.length > 0) {
+        if (err) return reject(err);
+        if (result.length > 0) {
           console.log('Email found!!');
-          resolve(true);
-        } else {
-          console.log('Email not found');
-          resolve(false);
+          return resolve(true);
         }
+        console.log('Email not found');
+        return resolve(false);
       }
     );
   });
@@ -51,10 +50,12 @@ const checkUserExists = async (email, con) => {
       (err, result) => {
         if (err) {
           console.log(err);
-          reject(err);
-        } else if (result.length === 0) {
-          resolve(false);
-        } else resolve(true);
+          return reject(err);
+        }
+        if (result.length === 0) {
+          return resolve(false);
+        }
+        return resolve(true);
       }
     );
   });
@@ -75,22 +76,20 @@ const insertClient = async (
   return new Promise((resolve, reject) => {
     if (emailExists) {
       console.log('The client already exists');
-      resolve(false);
-    } else {
-      con.query(
-        queryUsers,
-        [email, first_name, last_name, phone_number, city],
-        (err) => {
-          if (err) {
-            console.log(err);
-            reject(err);
-          } else {
-            console.log('Inserted succesfully');
-            resolve(true);
-          }
-        }
-      );
+      return resolve(false);
     }
+    con.query(
+      queryUsers,
+      [email, first_name, last_name, phone_number, city],
+      (err) => {
+        if (err) {
+          console.log(err);
+          return reject(err);
+        }
+        console.log('Inserted succesfully');
+        return resolve(true);
+      }
+    );
   });
 };
 
@@ -101,20 +100,25 @@ const checkClient = async (first_name, last_name, city, phone_number, con) => {
       `SELECT * FROM clients WHERE first_name = ? and last_name = ? and city = ? and phone_number = ?`,
       [first_name, last_name, city, phone_number],
       (error) => {
-        if (error) reject(error);
-        else resolve(true);
+        if (error) return reject(error);
+        return resolve(true);
       }
     );
   });
 };
 
 //Return all clients
-const getAllClients = async (con) => {
+const getAllClients = async (sortBy, sortOrder, con) => {
+  console.log(`select * from clients order by ${sortBy} ${sortOrder}`);
   return new Promise((resolve, reject) => {
-    con.query('SELECT * FROM clients', (err, res) => {
-      if (err) reject(err);
-      else resolve(res);
-    });
+    con.query(
+      'SELECT * FROM clients order by ? ?',
+      [sortBy, sortOrder],
+      (err, res) => {
+        if (err) return reject(err);
+        else return resolve(res);
+      }
+    );
   });
 };
 
@@ -189,11 +193,10 @@ const deleteOldPasswordHistory = async (email, con) => {
     await con.query(removeOldPassword, [email, email], (err, res) => {
       if (err) {
         console.log('Error removing oldest password!');
-        reject(err);
-      } else {
-        console.log('Removed oldest password successfully');
-        resolve(true);
+        return reject(err);
       }
+      console.log('Removed oldest password successfully');
+      return resolve(true);
     });
   });
 };
@@ -202,9 +205,9 @@ const countPasswordInHistory = async (email, con) => {
   const countPassword = `SELECT COUNT(email) as count_mail FROM password_history where email = ?`;
   return new Promise(async (resolve, reject) => {
     await con.query(countPassword, [email], (err, res) => {
-      if (err) reject(err);
-      else if (res[0]['count_mail'] > config.password_history) resolve(true);
-      else resolve(false);
+      if (err) return reject(err);
+      if (res[0]['count_mail'] > config.password_history) return resolve(true);
+      return resolve(false);
     });
   });
 };
@@ -219,19 +222,17 @@ const insertPasswordHistory = async (email, password, con) => {
       insertPassword,
       [email, password, currentDate],
       async (err) => {
-        if (err) reject(err);
+        if (err) return reject(err);
 
         const BiggerThanThreePassword = await countPasswordInHistory(
           email,
           con
         );
         console.log(BiggerThanThreePassword);
-        if (BiggerThanThreePassword) {
-          const check = await deleteOldPasswordHistory(email, con);
-          if (!check) resolve(false);
-          else resolve(true);
-        }
-        resolve(false);
+        if (!BiggerThanThreePassword) return resolve(false);
+        const check = await deleteOldPasswordHistory(email, con);
+        if (!check) return resolve(false);
+        return resolve(true);
       }
     );
   });
@@ -253,7 +254,7 @@ const insertUser = async (
   return new Promise(async (resolve, reject) => {
     if (emailExists) {
       console.log('The user already exists');
-      resolve(false);
+      return resolve(false);
     }
     let flag = 0;
 
@@ -261,22 +262,20 @@ const insertUser = async (
       pushUser,
       [email, first_name, last_name, phone_number, password, city],
       async (err) => {
-        if (err) reject(err);
-        else {
-          flag = 1;
-          const insertedPassword = await insertPasswordHistory(
-            email,
-            password,
-            con
-          );
-          if (!insertedPassword && flag === 0) {
-            console.log('Something went wrong');
-            resolve(false);
-          } else {
-            console.log('Inserted to password history and to users_details!');
-            resolve(true);
-          }
+        if (err) return reject(err);
+
+        flag = 1;
+        const insertedPassword = await insertPasswordHistory(
+          email,
+          password,
+          con
+        );
+        if (!insertedPassword && flag === 0) {
+          console.log('Something went wrong');
+          return resolve(false);
         }
+        console.log('Inserted to password history and to users_details!');
+        return resolve(true);
       }
     );
   });
@@ -365,9 +364,41 @@ const sortBy = async (column_name, con) => {
   });
 };
 
+const defaultQuery = `SELECT * FROM clients WHERE email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ? OR city LIKE ?`;
+
+const queries = {
+  first_name: {
+    asc: ' order by first_name asc',
+    desc: ' order by first_name desc',
+  },
+  last_name: {
+    asc: ' order by last_name asc',
+    desc: ' order by last_name desc',
+  },
+  phone_number: {
+    asc: ' order by phone_number asc',
+    desc: ' order by phone_number desc',
+  },
+  city: { asc: ' order by city asc', desc: ' order by city desc' },
+  mail: { asc: ' order by mail asc', desc: ' order by mail desc' },
+};
+
 //Search the client by one of his properties
-const searchClient = async (search_string, con) => {
-  const search = `SELECT * FROM clients WHERE email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ? OR city LIKE ?`;
+const searchClient = async (search_string, sortBy, sortOrder, con) => {
+  let search = defaultQuery;
+  if (sortBy && sortOrder) {
+    search += queries[sortBy][sortOrder];
+  }
+  const data = con.format(search, [
+    `%${search_string}%`,
+    `%${search_string}%`,
+    `%${search_string}%`,
+    `%${search_string}%`,
+    `%${search_string}%`,
+    sortBy,
+    sortOrder,
+  ]);
+  console.log(data);
   return new Promise((resolve, reject) => {
     con.query(
       search,
@@ -380,7 +411,7 @@ const searchClient = async (search_string, con) => {
       ],
       (err, result) => {
         if (err) {
-          console.log('Something went wrong', err);
+          console.log('Something went wrong');
           return resolve(false);
         } else return resolve(result);
       }
@@ -397,10 +428,10 @@ const updateLogins = async (email, con) => {
   const data = [email];
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err) => {
-      if (err) reject(false);
+      if (err) return reject(false);
       else {
         console.log('Updated the logins!');
-        resolve(true);
+        return resolve(true);
       }
     });
   });
@@ -413,8 +444,8 @@ const resetLogins = async (email, con) => {
 
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err) => {
-      if (err) reject(err);
-      else resolve(true);
+      if (err) return reject(err);
+      else return resolve(true);
     });
   });
 };

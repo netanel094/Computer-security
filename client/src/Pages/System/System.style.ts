@@ -6,6 +6,7 @@ export const SystemContainer = styled.div`
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -23,8 +24,7 @@ export const Container = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
-  
-`
+`;
 
 export const SearchBar = styled.input`
   width: 40%;
