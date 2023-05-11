@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
-    Form,
-    Label,
-    Input,
-    Button,
-    ErrorMessage,
-    Container,
-    Title,
-    SuccessMessage,
-    FailureMessage
+  Form,
+  Label,
+  Input,
+  Button,
+  ErrorMessage,
+  Container,
+  Title,
+  SuccessMessage,
+  FailureMessage,
 } from './ForgotPassword.style';
 
 const ForgotPassword = () => {
@@ -24,7 +25,7 @@ const ForgotPassword = () => {
     } else {
       setEmailError(false);
       setSubmitStatus('success');
-      // code to submit the form
+      axios.post('/api/userforgotpassword');
     }
   };
 
@@ -51,7 +52,9 @@ const ForgotPassword = () => {
         />
         {emailError && <ErrorMessage>Please enter a valid email</ErrorMessage>}
         {submitStatus === 'success' && (
-          <SuccessMessage>Temporary password sent to your email. Please check your mailbox.</SuccessMessage>
+          <SuccessMessage>
+            Temporary password sent to your email. Please check your mailbox.
+          </SuccessMessage>
         )}
         {submitStatus === 'failure' && (
           <FailureMessage>The email you entered is not valid.</FailureMessage>
