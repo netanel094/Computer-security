@@ -99,6 +99,13 @@ export const ButtonLink = styled(Link)`
   text-decoration: none;
 `;
 
+export const NavigateLinks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+`;
+
 export const RegisterLink = styled(Link)`
   margin-top: 20px;
   color: #2f55d4;

@@ -276,29 +276,21 @@ const updatePassword = async (email, new_password, con) => {
 
   return new Promise(async (resolve) => {
     const userExists = await checkUserExists(email, con);
-    if (!userExists) {
-      console.log('The user does not exist!');
-      return resolve(false);
-    }
+    if (!userExists)
+      return resolve({ success: false, message: 'The user does not exist!' });
 
     const check = await checkPasswordInHistory(email, new_password, con);
-    if (!check) {
-      console.log('The password is already used!');
-      return resolve(false);
-    }
+    if (!check)
+      return resolve({
+        success: false,
+        message: 'The password is already used !',
+      });
 
     const pushPassword = await insertPasswordHistory(email, new_password, con);
-
+    if (!pushPassword) throw 'failed pushing to password history';
     con.query(updatingPassword, [new_password, email], (err) => {
       if (err) return reject(err);
-      if (updatingPassword && pushPassword) {
-        console.log(
-          'Password is pushed to the password history and changed the user history'
-        );
-        return resolve(true);
-      }
-      console.log('Error pushing to password history');
-      return resolve(false);
+      return resolve({ success: true, message: 'Password is changed!' });
     });
   });
 };
@@ -335,7 +327,7 @@ const queries = {
     desc: ' order by phone_number desc',
   },
   city: { asc: ' order by city asc', desc: ' order by city desc' },
-  mail: { asc: ' order by mail asc', desc: ' order by mail desc' },
+  email: { asc: ' order by email asc', desc: ' order by email desc' },
 };
 
 //Search the client by one of his properties
@@ -344,16 +336,7 @@ const searchClient = async (search_string, sortBy, sortOrder, con) => {
   if (sortBy && sortOrder) {
     search += queries[sortBy][sortOrder];
   }
-  const data = con.format(search, [
-    `%${search_string}%`,
-    `%${search_string}%`,
-    `%${search_string}%`,
-    `%${search_string}%`,
-    `%${search_string}%`,
-    sortBy,
-    sortOrder,
-  ]);
-  console.log(data);
+
   return new Promise((resolve, reject) => {
     con.query(
       search,
@@ -366,9 +349,10 @@ const searchClient = async (search_string, sortBy, sortOrder, con) => {
       ],
       (err, result) => {
         if (err) {
-          console.log('Something went wrong');
+          console.log(err);
           return resolve(false);
-        } else return resolve(result);
+        }
+        return resolve(result);
       }
     );
   });
@@ -384,10 +368,9 @@ const updateLogins = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     con.query(q, data, (err) => {
       if (err) return reject(false);
-      else {
-        console.log('Updated the logins!');
-        return resolve(true);
-      }
+
+      console.log('Updated the logins!');
+      return resolve(true);
     });
   });
 };
@@ -400,7 +383,7 @@ const resetLogins = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     con.query(q, data, (err) => {
       if (err) return reject(err);
-      else return resolve(true);
+      return resolve(true);
     });
   });
 };

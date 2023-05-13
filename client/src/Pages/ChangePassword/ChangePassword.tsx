@@ -8,6 +8,7 @@ import {
 } from './ChangePassword.style';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const ChangePassword: FC = () => {
   const [isValid, setIsValid] = useState(true);
@@ -22,7 +23,13 @@ const ChangePassword: FC = () => {
     }
     axios
       .post('https://localhost:8080/api/changepassword', data)
-      .then(() => navigate('/'));
+      .then(() => {
+        toast.success('Password changed succesfully');
+        navigate('/');
+      })
+      .catch((error) => {
+        toast.error(error.response.data);
+      });
   };
 
   return (

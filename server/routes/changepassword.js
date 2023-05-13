@@ -24,14 +24,13 @@ router.post('/', async function (req, res) {
     if (new_password === old_password)
       return res.status(400).send('Please enter a password you never used');
 
-    const updatedPassword = await allQueries.updatePassword(
+    const { success, message } = await allQueries.updatePassword(
       email,
       new_password,
       con
     );
 
-    if (!updatedPassword)
-      return res.status(400).send('Error changing password!');
+    if (!success) return res.status(400).send(message);
 
     return res.status(200).send('Password changed succesfully!');
   } catch (error) {

@@ -178,9 +178,7 @@ const System = () => {
               <td>{customer.last_name}</td>
               <td>{customer.email}</td>
               <td>{customer.phone_number}</td>
-              <td>
-                <div dangerouslySetInnerHTML={{ __html: customer.city }}></div>
-              </td>
+              <td>{customer.city}</td>
               <td>
                 <DeleteButton onClick={() => deleteCustomer(customer.email)}>
                   Delete

@@ -12,9 +12,11 @@ import {
   CheckBoxWrapper,
   CheckBoxInput,
   CheckBoxLabel,
+  NavigateLinks,
 } from './Login.style';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/lottie/helloLogin.json';
+import { toast } from 'react-toastify';
 
 const Login: FC = () => {
   const [username, setUsername] = useState('');
@@ -34,7 +36,10 @@ const Login: FC = () => {
         password,
         email: username,
       })
-      .then((res) => navigate('/System'));
+      .then((res) => navigate('/System'))
+      .catch((error) => {
+        toast.error(error.response.data);
+      });
   };
 
   const handleRememberMe = () => {
@@ -73,9 +78,10 @@ const Login: FC = () => {
           </CheckBoxWrapper>
           <Button type="submit">Login</Button>
         </AnimatedForm>
-        <Link to="ForgotPassword">Forgot password?</Link>
-        &nbsp;
-        <Link to="RegisterPage">Don't have an account? press here</Link>
+        <NavigateLinks>
+          <Link to="ForgotPassword">Forgot password?</Link>
+          <Link to="RegisterPage">Don't have an account? press here</Link>
+        </NavigateLinks>
       </FormWrapper>
     </FormContainer>
   );
