@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import axios from 'axios';
-import { redirect, Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   FormContainer,
@@ -27,28 +27,20 @@ const Login: FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (username === '' || password === '') {
-      setError('Please enter username and password');
-    } else {
-      setError('');
-      axios
-        .post('/api/userauthentication', {
-          password,
-          email: username,
-        })
-        .then((res) => navigate('/System'));
-      // .then((res) => console.log(res))
-      // .catch((err) => console.log(err));
-    }
-    navigate('/System');
+    if (username === '' || password === '')
+      return setError('Please enter username and password');
+
+    setError('');
+    axios
+      .post('/api/userauthentication', {
+        password,
+        email: username,
+      })
+      .then((res) => navigate('/System'));
   };
 
   const handleRememberMe = () => {
     setRememberMe(!rememberMe);
-  };
-
-  const handleForgotPassword = () => {
-    console.log('Forgot password button clicked');
   };
 
   return (
@@ -83,12 +75,9 @@ const Login: FC = () => {
           </CheckBoxWrapper>
           <Button type="submit">Login</Button>
         </AnimatedForm>
-        <LinkButton onClick={handleForgotPassword}>Forgot password?</LinkButton>
-        <LinkButton>
-          <RegisterLink to="RegisterPage">
-            Don't have an account? press here
-          </RegisterLink>
-        </LinkButton>
+        <Link to="ForgotPassword">Forgot password?</Link>
+        &nbsp;
+        <Link to="RegisterPage">Don't have an account? press here</Link>
       </FormWrapper>
     </FormContainer>
   );

@@ -5,48 +5,46 @@ import {
   Input,
   Button,
   ErrorMessage,
-} from './ChangePassword.style';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+} from './ResetPassword.style';
 
 const ChangePassword: FC = () => {
+  const [hashedValue, setHashedValue] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [isValid, setIsValid] = useState(true);
-  const navigate = useNavigate();
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
-    const { newPassword, confirmNewPassword } = data;
     if (newPassword !== confirmNewPassword) {
-      return setIsValid(false);
+      setIsValid(false);
+    } else {
+      // handle form submission
     }
-    axios
-      .post('https://localhost:8080/api/changepassword', data)
-      .then(() => navigate('/'));
   };
 
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
-        <Input type="email" placeholder="Email" name="email" required />
         <Input
-          type="password"
-          placeholder="Current Password"
-          name="currentPassword"
+          type="text"
+          placeholder="Value from email"
+          value={hashedValue}
+          onChange={(event) => setHashedValue(event.target.value)}
           required
         />
         <Input
           type="password"
           placeholder="New Password"
-          name="newPassword"
+          value={newPassword}
+          onChange={(event) => setNewPassword(event.target.value)}
           required
         />
         <Input
           type="password"
           placeholder="Confirm New Password"
-          name="confirmNewPassword"
+          value={confirmNewPassword}
+          onChange={(event) => setConfirmNewPassword(event.target.value)}
           required
-          isInvalid={!isValid}
         />
         {!isValid && <ErrorMessage>Passwords do not match</ErrorMessage>}
         <Button type="submit">Change Password</Button>
