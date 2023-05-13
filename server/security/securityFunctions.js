@@ -40,7 +40,6 @@ const checkPhone = (phoneNumber) => {
 
 const inputValidate = (userInput) => {
   if (userInput === '') return true;
-
   return validator.escape(userInput);
 };
 

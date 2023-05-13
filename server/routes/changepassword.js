@@ -13,8 +13,8 @@ router.post('/', async function (req, res) {
     const verification_password = confirmNewPassword;
     console.log({ currentPassword });
 
-    if (!security.checkPassword(new_password))
-      return res.status(400).send('The new password is not valid');
+    // if (!security.checkPassword(new_password))
+    //   return res.status(400).send('The new password is not valid');
 
     //Checking if the new password equals to the verification password
     if (new_password !== verification_password)

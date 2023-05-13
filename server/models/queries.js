@@ -5,8 +5,7 @@ const config = JSON.parse(fs.readFileSync('config.json'));
 const checkUserMail = (mail, con) => {
   return new Promise(async (resolve, reject) => {
     con.query(
-      `SELECT * FROM users_details WHERE email = ?`,
-      mail,
+      `SELECT * FROM users_details WHERE email = '${mail}'`,
       (err, result) => {
         if (err) return reject(err);
         if (result.length > 0) {
@@ -23,15 +22,18 @@ const checkUserMail = (mail, con) => {
 //Checking if email exists in clients schema
 const checkClientMail = (mail, con) => {
   return new Promise(async (resolve, reject) => {
-    con.query(`SELECT * FROM clients WHERE email = ?`, mail, (err, result) => {
-      if (err) return reject(err);
-      if (result.length > 0) {
-        console.log('Email found!!');
-        return resolve(true);
+    con.query(
+      `SELECT * FROM clients WHERE email = '${mail}'`,
+      (err, result) => {
+        if (err) return reject(err);
+        if (result.length > 0) {
+          console.log('Email found!!');
+          return resolve(true);
+        }
+        console.log('Email not found');
+        return resolve(false);
       }
-      console.log('Email not found');
-      return resolve(false);
-    });
+    );
   });
 };
 
@@ -39,8 +41,7 @@ const checkClientMail = (mail, con) => {
 const checkUserExists = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     con.query(
-      `SELECT * FROM users_details WHERE email = ?`,
-      [email],
+      `SELECT * FROM users_details WHERE email = '${email}'`,
       (err, result) => {
         if (err) return reject(err);
         if (result.length === 0) return resolve(false);
@@ -59,7 +60,7 @@ const insertClient = async (
   city,
   con
 ) => {
-  const queryUsers = `INSERT INTO clients (email,first_name,last_name,phone_number,city) VALUES (?, ?, ?, ?, ?)`;
+  const queryUsers = `INSERT INTO clients (email,first_name,last_name,phone_number,city) VALUES ('${email}', '${first_name}', '${last_name}', '${phone_number}', '${city}')`;
   const emailExists = await checkClientMail(email, con);
 
   return new Promise((resolve, reject) => {
@@ -67,18 +68,14 @@ const insertClient = async (
       console.log('The client already exists');
       return resolve(false);
     }
-    con.query(
-      queryUsers,
-      [email, first_name, last_name, phone_number, city],
-      (err) => {
-        if (err) {
-          console.log(err);
-          return reject(err);
-        }
-        console.log('Inserted succesfully');
-        return resolve(true);
+    con.query(queryUsers, (err) => {
+      if (err) {
+        console.log(err);
+        return reject(err);
       }
-    );
+      console.log('Inserted succesfully');
+      return resolve(true);
+    });
   });
 };
 
@@ -86,8 +83,7 @@ const insertClient = async (
 const checkClient = async (first_name, last_name, city, phone_number, con) => {
   return new Promise((resolve, reject) => {
     con.query(
-      `SELECT * FROM clients WHERE first_name = ? and last_name = ? and city = ? and phone_number = ?`,
-      [first_name, last_name, city, phone_number],
+      `SELECT * FROM clients WHERE first_name = '${first_name}' and last_name = '${last_name}' and city = '${city}' and phone_number = '${phone_number}'`,
       (error) => {
         if (error) return reject(error);
         return resolve(true);
@@ -100,12 +96,12 @@ const checkClient = async (first_name, last_name, city, phone_number, con) => {
 const removeClient = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     const checkMail = await checkClientMail(email, con);
-    const q = 'DELETE FROM clients WHERE email = ?';
+    const q = `DELETE FROM clients WHERE email = '${email}'`;
     if (!checkMail) {
       console.log('The client is not found');
       return resolve(false);
     }
-    con.query(q, email, (err, res) => {
+    con.query(q, (err, res) => {
       if (err) return reject(err);
 
       if (res.affectedRows === 0) {
@@ -128,15 +124,11 @@ const removeUser = async (
   con
 ) => {
   return new Promise((resolve, reject) => {
-    const q = `DELETE FROM clients WHERE first_name = ? and last_name = ? and email = ? and phone_number= ? and city = ?`;
-    con.query(
-      q,
-      [first_name, last_name, email, phone_number, city],
-      (error) => {
-        if (error) return reject(error);
-        return resolve(true);
-      }
-    );
+    const q = `DELETE FROM clients WHERE first_name = '${first_name}' and last_name = '${last_name}' and email = '${email}' and phone_number = '${phone_number}' and city = '${city}'`;
+    con.query(q, (error) => {
+      if (error) return reject(error);
+      return resolve(true);
+    });
   });
 };
 
@@ -144,19 +136,19 @@ const deleteOldPasswordHistory = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     const removeOldPassword = `
     DELETE FROM password_history
-    WHERE email = ? AND creation_date = (
+    WHERE email = '${email}' AND creation_date = (
       SELECT MIN(creation_date)
       FROM (
         SELECT creation_date
         FROM password_history
-        WHERE email = ?
+        WHERE email = '${email}'
         ORDER BY creation_date ASC
         LIMIT 1
       ) AS t
     )
     `;
 
-    con.query(removeOldPassword, [email, email], (err) => {
+    con.query(removeOldPassword, (err) => {
       if (err) {
         console.log('Error removing oldest password!');
         return reject(err);
@@ -168,9 +160,9 @@ const deleteOldPasswordHistory = async (email, con) => {
 };
 
 const countPasswordInHistory = async (email, con) => {
-  const countPassword = `SELECT COUNT(email) as count_mail FROM password_history where email = ?`;
+  const countPassword = `SELECT COUNT(email) as count_mail FROM password_history where email = '${email}'`;
   return new Promise(async (resolve, reject) => {
-    con.query(countPassword, [email], (err, res) => {
+    con.query(countPassword, (err, res) => {
       if (err) return reject(err);
 
       if (res[0]['count_mail'] > config.password_history) return resolve(true);
@@ -181,11 +173,11 @@ const countPasswordInHistory = async (email, con) => {
 
 //Inserting the password of the user to password history
 const insertPasswordHistory = async (email, password, con) => {
-  const insertPassword = `insert into password_history (email, password, creation_date) values (?, ?, ?)`;
   const currentDate = new Date();
+  const insertPassword = `insert into password_history (email, password, creation_date) values ('${email}', '${password}', '${currentDate}')`;
 
   return new Promise(async (resolve, reject) => {
-    con.query(insertPassword, [email, password, currentDate], async (err) => {
+    con.query(insertPassword, async (err) => {
       if (err) return reject(err);
 
       const BiggerThanThreePassword = await countPasswordInHistory(email, con);
@@ -209,7 +201,7 @@ const insertUser = async (
   city,
   con
 ) => {
-  const pushUser = `INSERT INTO users_details (email,first_name,last_name,phone_number,password,city) VALUES (?, ?, ?, ?, ?, ?)`;
+  const pushUser = `INSERT INTO users_details (email,first_name,last_name,phone_number,password,city) VALUES ('${email}', '${first_name}', '${last_name}', '${phone_number}', '${password}', '${city}')`;
   const emailExists = await checkUserMail(email, con);
 
   return new Promise(async (resolve, reject) => {
@@ -219,35 +211,31 @@ const insertUser = async (
     }
     let flag = 0;
 
-    con.query(
-      pushUser,
-      [email, first_name, last_name, phone_number, password, city],
-      async (err) => {
-        if (err) return reject(err);
+    con.query(pushUser, async (err) => {
+      if (err) return reject(err);
 
-        flag = 1;
-        const insertedPassword = await insertPasswordHistory(
-          email,
-          password,
-          con
-        );
-        if (!insertedPassword && flag === 0) {
-          console.log('Something went wrong');
-          return resolve(false);
-        }
-        console.log('Inserted to password history and to users_details!');
-        return resolve(true);
+      flag = 1;
+      const insertedPassword = await insertPasswordHistory(
+        email,
+        password,
+        con
+      );
+      if (!insertedPassword && flag === 0) {
+        console.log('Something went wrong');
+        return resolve(false);
       }
-    );
+      console.log('Inserted to password history and to users_details!');
+      return resolve(true);
+    });
   });
 };
 
 //Checking if the password is in the password history already
 const checkPasswordInHistory = (email, password, con) => {
   return new Promise(async (resolve, reject) => {
-    const q = `SELECT * FROM password_history WHERE email = ? AND password = ?`;
+    const q = `SELECT * FROM password_history WHERE email = '${email}' AND password = '${password}'`;
 
-    con.query(q, [email, password], (err, res) => {
+    con.query(q, (err, res) => {
       if (err) return reject(err);
       if (res.length > 0) return resolve(false);
       console.log('User did not use this password!');
@@ -257,22 +245,21 @@ const checkPasswordInHistory = (email, password, con) => {
 };
 
 //Search for user password by his email
-const findUserPassword = async (email, con) => {
-  const q = `select password from users_details where email = ?`;
-  const data = email;
+const findUser = async (email, password, con) => {
+  const q = `select password from users_details where email = '${email}' and password = '${password}'`;
 
   return new Promise(async (resolve, reject) => {
-    con.query(q, data, (err, res) => {
+    con.query(q, (err, res) => {
       if (err) return reject(err);
-      return resolve(res[0].password);
+      if (res.length === 0) return resolve({ success: false });
+      return resolve({ success: true });
     });
   });
 };
 
 //Updating the password
 const updatePassword = async (email, new_password, con) => {
-  const updatingPassword =
-    'UPDATE users_details SET password = ? WHERE email = ?';
+  const updatingPassword = `UPDATE users_details SET password = '${new_password}' WHERE email = '${email}'`;
 
   return new Promise(async (resolve) => {
     const userExists = await checkUserExists(email, con);
@@ -288,7 +275,7 @@ const updatePassword = async (email, new_password, con) => {
 
     const pushPassword = await insertPasswordHistory(email, new_password, con);
     if (!pushPassword) throw 'failed pushing to password history';
-    con.query(updatingPassword, [new_password, email], (err) => {
+    con.query(updatingPassword, (err) => {
       if (err) return reject(err);
       return resolve({ success: true, message: 'Password is changed!' });
     });
@@ -299,8 +286,7 @@ const updatePassword = async (email, new_password, con) => {
 const sortBy = async (column_name, con) => {
   return new Promise(async (resolve, reject) => {
     con.query(
-      `SELECT * FROM clients ORDER BY ? ASC`,
-      [column_name],
+      `SELECT * FROM clients ORDER BY '${column_name}' ASC`,
       (error) => {
         if (error) return reject(false);
 
@@ -311,50 +297,42 @@ const sortBy = async (column_name, con) => {
   });
 };
 
-const defaultQuery = `SELECT * FROM clients WHERE email LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR phone_number LIKE ? OR city LIKE ?`;
-
-const queries = {
-  first_name: {
-    asc: ' order by first_name asc',
-    desc: ' order by first_name desc',
-  },
-  last_name: {
-    asc: ' order by last_name asc',
-    desc: ' order by last_name desc',
-  },
-  phone_number: {
-    asc: ' order by phone_number asc',
-    desc: ' order by phone_number desc',
-  },
-  city: { asc: ' order by city asc', desc: ' order by city desc' },
-  email: { asc: ' order by email asc', desc: ' order by email desc' },
-};
-
 //Search the client by one of his properties
 const searchClient = async (search_string, sortBy, sortOrder, con) => {
+  const defaultQuery = `SELECT * FROM clients WHERE email LIKE '%${search_string}%' OR first_name LIKE '%${search_string}%' 
+OR last_name LIKE '%${search_string}%' OR phone_number LIKE '%${search_string}%' OR city LIKE '%${search_string}%'`;
+
+  console.log({ search_string, sortBy, sortOrder });
+
+  const queries = {
+    first_name: {
+      asc: ' order by first_name asc',
+      desc: ' order by first_name desc',
+    },
+    last_name: {
+      asc: ' order by last_name asc',
+      desc: ' order by last_name desc',
+    },
+    phone_number: {
+      asc: ' order by phone_number asc',
+      desc: ' order by phone_number desc',
+    },
+    city: { asc: ' order by city asc', desc: ' order by city desc' },
+    email: { asc: ' order by email asc', desc: ' order by email desc' },
+  };
   let search = defaultQuery;
   if (sortBy && sortOrder) {
     search += queries[sortBy][sortOrder];
   }
 
   return new Promise((resolve, reject) => {
-    con.query(
-      search,
-      [
-        `%${search_string}%`,
-        `%${search_string}%`,
-        `%${search_string}%`,
-        `%${search_string}%`,
-        `%${search_string}%`,
-      ],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return resolve(false);
-        }
-        return resolve(result);
+    con.query(search, (err, result) => {
+      if (err) {
+        console.log(err);
+        return resolve(false);
       }
-    );
+      return resolve(result);
+    });
   });
 };
 
@@ -362,11 +340,10 @@ const searchClient = async (search_string, sortBy, sortOrder, con) => {
 const updateLogins = async (email, con) => {
   const q = `UPDATE users_details
   SET logins = logins + 1
-  WHERE email = ?;
+  WHERE email = '${email}';
   `;
-  const data = [email];
   return new Promise(async (resolve, reject) => {
-    con.query(q, data, (err) => {
+    con.query(q, (err) => {
       if (err) return reject(false);
 
       console.log('Updated the logins!');
@@ -377,11 +354,10 @@ const updateLogins = async (email, con) => {
 
 //Reseting the logins to 0 after his block is done or he entered the correct password
 const resetLogins = async (email, con) => {
-  const q = `update users_details set logins = 0 where email = ?`;
-  const data = [email];
+  const q = `update users_details set logins = 0 where email = '${email}'`;
 
   return new Promise(async (resolve, reject) => {
-    con.query(q, data, (err) => {
+    con.query(q, (err) => {
       if (err) return reject(err);
       return resolve(true);
     });
@@ -390,13 +366,12 @@ const resetLogins = async (email, con) => {
 
 //Counting the logins in order to check if his logins count is more than allowed
 const countLogins = async (email, con) => {
-  const q = `select logins as l from users_details where email = ?`;
-  const data = [email];
+  const q = `select logins as logs from users_details where email = '${email}'`;
 
   return new Promise(async (resolve, reject) => {
-    con.query(q, data, (err, res) => {
+    con.query(q, (err, res) => {
       if (err) return reject(err);
-      if (res[0]['l'] >= config.login_attempts) return resolve(true);
+      if (res[0].logs >= config.login_attempts) return resolve(true);
       return resolve(false);
     });
   });
@@ -406,11 +381,10 @@ const countLogins = async (email, con) => {
 const updateTimeStamp = async (email, con) => {
   const q = `UPDATE users_details
   SET created_at = NOW()
-  WHERE email = ?`;
-  const data = email;
+  WHERE email = '${email}'`;
 
   return new Promise(async (resolve, reject) => {
-    con.query(q, data, (err) => {
+    con.query(q, (err) => {
       if (err) return reject(err);
       return resolve(true);
     });
@@ -419,12 +393,11 @@ const updateTimeStamp = async (email, con) => {
 
 //Getting the last time login of the user in order to check if he is still blocked or not
 const lastTimeLogin = async (email, con) => {
-  const q = `SELECT created_at from users_details where email = ?`;
-  const data = email;
+  const q = `SELECT created_at from users_details where email = '${email}'`;
   return new Promise(async (resolve, reject) => {
-    con.query(q, data, (err, res) => {
+    con.query(q, (err, res) => {
       if (err) return reject(err);
-      return resolve(res[0]['created_at']);
+      return resolve(res[0].created_at);
     });
   });
 };
@@ -432,12 +405,11 @@ const lastTimeLogin = async (email, con) => {
 //Updating the password of the user with the email code that was sent to him
 const userForgotPassword = async (email, code, con) => {
   const q = `UPDATE users_details
-  SET password = ?
-  WHERE email = ?`;
-  const data = [code, email];
+  SET password = '${code}'
+  WHERE email = '${email}'`;
 
   return new Promise((resolve, reject) => {
-    con.query(q, data, (err) => {
+    con.query(q, (err) => {
       // console.log('Query:', con.query(q, [email, code]).sql);
       if (err) return reject(err);
       console.log(
@@ -462,7 +434,7 @@ module.exports = {
   checkClientMail,
   insertPasswordHistory,
   searchClient,
-  findUserPassword,
+  findUser,
   updateLogins,
   countLogins,
   updateTimeStamp,

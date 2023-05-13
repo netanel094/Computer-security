@@ -12,14 +12,14 @@ router.post('/', async function (req, res) {
   console.log(userExists);
   if (userExists) return res.status(400).send('User already exists!');
 
-  if (!security.isValidEmail(email))
-    return res.status(400).send('The email is not valid!');
+  // if (!security.isValidEmail(email))
+  //   return res.status(400).send('The email is not valid!');
 
-  if (security.checkPassword(password) !== 'all required elements')
-    return res.status(400).send('The password is not valid!');
+  // if (security.checkPassword(password) !== 'all required elements')
+  //   return res.status(400).send('The password is not valid!');
 
-  if (!security.checkPhone(phone_number))
-    return res.status(400).send('The phone number is not valid!');
+  // if (!security.checkPhone(phone_number))
+  //   return res.status(400).send('The phone number is not valid!');
 
   //Adding a user to the database
   try {
