@@ -104,27 +104,21 @@ const checkClient = async (first_name, last_name, city, phone_number, con) => {
 const removeClient = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     const checkMail = await checkClientMail(email, con);
+    const q = 'DELETE FROM clients WHERE email = ?';
     if (!checkMail) {
       console.log('The client is not found');
-      resolve(false);
-    } else {
-      con.query(
-        'DELETE FROM clients WHERE email = ?',
-        [email],
-        (error, result) => {
-          if (error) reject(error);
-          else {
-            if (result.affectedRows === 0) {
-              console.log('Client is not removed due to something unexpected');
-              resolve(false);
-            } else {
-              console.log('Client removed successfully!');
-              resolve(true);
-            }
-          }
-        }
-      );
+      return resolve(false);
     }
+    con.query(q, email, (err, res) => {
+      if (err) return reject(err);
+
+      if (res.affectedRows === 0) {
+        console.log('Client is not removed due to something unexpected');
+        return resolve(false);
+      }
+      console.log('Client removed successfully!');
+      return resolve(true);
+    });
   });
 };
 
@@ -138,12 +132,13 @@ const removeUser = async (
   con
 ) => {
   return new Promise((resolve, reject) => {
+    const q = `DELETE FROM clients WHERE first_name = ? and last_name = ? and email = ? and phone_number= ? and city = ?`;
     con.query(
-      `DELETE FROM clients WHERE first_name = ? and last_name = ? and email = ? and phone_number= ? and city = ?`,
+      q,
       [first_name, last_name, email, phone_number, city],
       (error) => {
-        if (error) reject(error);
-        else resolve(true);
+        if (error) return reject(error);
+        return resolve(true);
       }
     );
   });
@@ -266,12 +261,10 @@ const checkPasswordInHistory = (email, password, con) => {
     const q = `SELECT * FROM password_history WHERE email = ? AND password = ?`;
 
     await con.query(q, [email, password], (err, res) => {
-      if (err) reject(err);
-      else if (res.affectedRows > 0) resolve(false);
-      else {
-        console.log('User did not use this password!');
-        resolve(true);
-      }
+      if (err) return reject(err);
+      if (res.length > 0) return resolve(false);
+      console.log('User did not use this password!');
+      return resolve(true);
     });
   });
 };
@@ -283,8 +276,8 @@ const findUserPassword = async (email, con) => {
 
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err, res) => {
-      if (err) reject(err);
-      else resolve(res[0].password);
+      if (err) return reject(err);
+      return resolve(res[0].password);
     });
   });
 };
@@ -298,7 +291,7 @@ const updatePassword = async (email, old_password, new_password, con) => {
     const userExists = await checkUserExists(email, con);
     if (!userExists) {
       console.log('The user does not exist!');
-      resolve(false);
+      return resolve(false);
     }
 
     const check = await checkPasswordInHistory(email, new_password, con);
@@ -330,11 +323,10 @@ const sortBy = async (column_name, con) => {
       `SELECT * FROM clients ORDER BY ? ASC`,
       [column_name],
       (error) => {
-        if (error) reject(false);
-        else {
-          console.log('Successfully sorted!');
-          resolve(true);
-        }
+        if (error) return reject(false);
+
+        console.log('Successfully sorted!');
+        return resolve(true);
       }
     );
   });
@@ -433,9 +425,9 @@ const countLogins = async (email, con) => {
 
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err, res) => {
-      if (err) reject(err);
-      else if (res[0]['l'] >= config.login_attempts) resolve(true);
-      else resolve(false);
+      if (err) return reject(err);
+      if (res[0]['l'] >= config.login_attempts) return resolve(true);
+      return resolve(false);
     });
   });
 };
@@ -449,8 +441,8 @@ const updateTimeStamp = async (email, con) => {
 
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err) => {
-      if (err) reject(err);
-      else resolve(true);
+      if (err) return reject(err);
+      return resolve(true);
     });
   });
 };
@@ -461,8 +453,8 @@ const lastTimeLogin = async (email, con) => {
   const data = email;
   return new Promise(async (resolve, reject) => {
     await con.query(q, data, (err, res) => {
-      if (err) reject(err);
-      else resolve(res[0]['created_at']);
+      if (err) return reject(err);
+      return resolve(res[0]['created_at']);
     });
   });
 };

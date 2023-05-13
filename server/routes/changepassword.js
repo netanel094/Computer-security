@@ -30,7 +30,6 @@ router.post('/', async function (req, res) {
       new_password,
       con
     );
-    console.log(8);
 
     if (!updatedPassword)
       return res.status(400).send('Error changing password!');
