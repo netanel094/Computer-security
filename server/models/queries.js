@@ -4,7 +4,7 @@ const config = JSON.parse(fs.readFileSync('config.json'));
 //Checking if email exists in users schema
 const checkUserMail = (mail, con) => {
   return new Promise(async (resolve, reject) => {
-    await con.query(
+    con.query(
       `SELECT * FROM users_details WHERE email = ?`,
       mail,
       (err, result) => {
@@ -23,26 +23,22 @@ const checkUserMail = (mail, con) => {
 //Checking if email exists in clients schema
 const checkClientMail = (mail, con) => {
   return new Promise(async (resolve, reject) => {
-    await con.query(
-      `SELECT * FROM clients WHERE email = ?`,
-      mail,
-      (err, result) => {
-        if (err) return reject(err);
-        if (result.length > 0) {
-          console.log('Email found!!');
-          return resolve(true);
-        }
-        console.log('Email not found');
-        return resolve(false);
+    con.query(`SELECT * FROM clients WHERE email = ?`, mail, (err, result) => {
+      if (err) return reject(err);
+      if (result.length > 0) {
+        console.log('Email found!!');
+        return resolve(true);
       }
-    );
+      console.log('Email not found');
+      return resolve(false);
+    });
   });
 };
 
 //Checking if the user exists by his email and password
 const checkUserExists = async (email, con) => {
   return new Promise(async (resolve, reject) => {
-    await con.query(
+    con.query(
       `SELECT * FROM users_details WHERE email = ?`,
       [email],
       (err, result) => {
@@ -160,7 +156,7 @@ const deleteOldPasswordHistory = async (email, con) => {
     )
     `;
 
-    await con.query(removeOldPassword, [email, email], (err) => {
+    con.query(removeOldPassword, [email, email], (err) => {
       if (err) {
         console.log('Error removing oldest password!');
         return reject(err);
@@ -174,7 +170,7 @@ const deleteOldPasswordHistory = async (email, con) => {
 const countPasswordInHistory = async (email, con) => {
   const countPassword = `SELECT COUNT(email) as count_mail FROM password_history where email = ?`;
   return new Promise(async (resolve, reject) => {
-    await con.query(countPassword, [email], (err, res) => {
+    con.query(countPassword, [email], (err, res) => {
       if (err) return reject(err);
 
       if (res[0]['count_mail'] > config.password_history) return resolve(true);
@@ -189,26 +185,17 @@ const insertPasswordHistory = async (email, password, con) => {
   const currentDate = new Date();
 
   return new Promise(async (resolve, reject) => {
-    await con.query(
-      insertPassword,
-      [email, password, currentDate],
-      async (err) => {
-        if (err) return reject(err);
+    con.query(insertPassword, [email, password, currentDate], async (err) => {
+      if (err) return reject(err);
 
-        const BiggerThanThreePassword = await countPasswordInHistory(
-          email,
-          con
-        );
+      const BiggerThanThreePassword = await countPasswordInHistory(email, con);
+      if (!BiggerThanThreePassword) return resolve(false);
 
-        console.log(BiggerThanThreePassword);
-        if (!BiggerThanThreePassword) return resolve(false);
+      const deletePassword = await deleteOldPasswordHistory(email, con);
 
-        const check = await deleteOldPasswordHistory(email, con);
-
-        if (!check) return resolve(false);
-        return resolve(true);
-      }
-    );
+      if (!deletePassword) return resolve(false);
+      return resolve(true);
+    });
   });
 };
 
@@ -232,7 +219,7 @@ const insertUser = async (
     }
     let flag = 0;
 
-    await con.query(
+    con.query(
       pushUser,
       [email, first_name, last_name, phone_number, password, city],
       async (err) => {
@@ -260,7 +247,7 @@ const checkPasswordInHistory = (email, password, con) => {
   return new Promise(async (resolve, reject) => {
     const q = `SELECT * FROM password_history WHERE email = ? AND password = ?`;
 
-    await con.query(q, [email, password], (err, res) => {
+    con.query(q, [email, password], (err, res) => {
       if (err) return reject(err);
       if (res.length > 0) return resolve(false);
       console.log('User did not use this password!');
@@ -272,10 +259,10 @@ const checkPasswordInHistory = (email, password, con) => {
 //Search for user password by his email
 const findUserPassword = async (email, con) => {
   const q = `select password from users_details where email = ?`;
-  const data = [email];
+  const data = email;
 
   return new Promise(async (resolve, reject) => {
-    await con.query(q, data, (err, res) => {
+    con.query(q, data, (err, res) => {
       if (err) return reject(err);
       return resolve(res[0].password);
     });
@@ -283,9 +270,9 @@ const findUserPassword = async (email, con) => {
 };
 
 //Updating the password
-const updatePassword = async (email, old_password, new_password, con) => {
+const updatePassword = async (email, new_password, con) => {
   const updatingPassword =
-    'UPDATE users_details SET password = ? WHERE email = ? AND password = ?';
+    'UPDATE users_details SET password = ? WHERE email = ?';
 
   return new Promise(async (resolve) => {
     const userExists = await checkUserExists(email, con);
@@ -302,7 +289,7 @@ const updatePassword = async (email, old_password, new_password, con) => {
 
     const pushPassword = await insertPasswordHistory(email, new_password, con);
 
-    con.query(updatingPassword, [new_password, email, old_password], (err) => {
+    con.query(updatingPassword, [new_password, email], (err) => {
       if (err) return reject(err);
       if (updatingPassword && pushPassword) {
         console.log(
@@ -319,7 +306,7 @@ const updatePassword = async (email, old_password, new_password, con) => {
 //Sort client table by specific column
 const sortBy = async (column_name, con) => {
   return new Promise(async (resolve, reject) => {
-    await con.query(
+    con.query(
       `SELECT * FROM clients ORDER BY ? ASC`,
       [column_name],
       (error) => {
@@ -395,7 +382,7 @@ const updateLogins = async (email, con) => {
   `;
   const data = [email];
   return new Promise(async (resolve, reject) => {
-    await con.query(q, data, (err) => {
+    con.query(q, data, (err) => {
       if (err) return reject(false);
       else {
         console.log('Updated the logins!');
@@ -411,7 +398,7 @@ const resetLogins = async (email, con) => {
   const data = [email];
 
   return new Promise(async (resolve, reject) => {
-    await con.query(q, data, (err) => {
+    con.query(q, data, (err) => {
       if (err) return reject(err);
       else return resolve(true);
     });
@@ -424,7 +411,7 @@ const countLogins = async (email, con) => {
   const data = [email];
 
   return new Promise(async (resolve, reject) => {
-    await con.query(q, data, (err, res) => {
+    con.query(q, data, (err, res) => {
       if (err) return reject(err);
       if (res[0]['l'] >= config.login_attempts) return resolve(true);
       return resolve(false);
@@ -440,7 +427,7 @@ const updateTimeStamp = async (email, con) => {
   const data = email;
 
   return new Promise(async (resolve, reject) => {
-    await con.query(q, data, (err) => {
+    con.query(q, data, (err) => {
       if (err) return reject(err);
       return resolve(true);
     });
@@ -452,9 +439,28 @@ const lastTimeLogin = async (email, con) => {
   const q = `SELECT created_at from users_details where email = ?`;
   const data = email;
   return new Promise(async (resolve, reject) => {
-    await con.query(q, data, (err, res) => {
+    con.query(q, data, (err, res) => {
       if (err) return reject(err);
       return resolve(res[0]['created_at']);
+    });
+  });
+};
+
+//Updating the password of the user with the email code that was sent to him
+const userForgotPassword = async (email, code, con) => {
+  const q = `UPDATE users_details
+  SET password = ?
+  WHERE email = ?`;
+  const data = [code, email];
+
+  return new Promise((resolve, reject) => {
+    con.query(q, data, (err) => {
+      // console.log('Query:', con.query(q, [email, code]).sql);
+      if (err) return reject(err);
+      console.log(
+        'Changing the password of the user with a value from the email'
+      );
+      return resolve(true);
     });
   });
 };
@@ -479,6 +485,7 @@ module.exports = {
   updateTimeStamp,
   resetLogins,
   lastTimeLogin,
+  userForgotPassword,
 };
 
 //Delete the data from tables! Dont use!!!!

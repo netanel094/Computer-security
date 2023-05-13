@@ -36,7 +36,7 @@ function useCustomers({ sortBy, sortOrder }: useCustomerType) {
       .then(fetch);
   };
   useEffect(fetch, [search, sortBy, sortOrder]);
-  return { customers, setSearch, deleteCustomer };
+  return { customers, setSearch, deleteCustomer, refetchCustomers: fetch };
 }
 
 export default useCustomers;

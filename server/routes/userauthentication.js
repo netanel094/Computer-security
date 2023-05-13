@@ -53,10 +53,9 @@ router.post('/', async function (req, res) {
       return res
         .status(400)
         .send('Password or email are wrong! Please try again');
-    } else {
-      await allQueries.resetLogins(email, con);
-      res.status(200).send('Login succeeded');
     }
+    await allQueries.resetLogins(email, con);
+    return res.status(200).send('Login succeeded');
   } catch (error) {
     console.error(error);
     res.status(500).send(error);

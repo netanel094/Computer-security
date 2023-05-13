@@ -12,8 +12,6 @@ import {
   CheckBoxWrapper,
   CheckBoxInput,
   CheckBoxLabel,
-  LinkButton,
-  RegisterLink,
 } from './Login.style';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/lottie/helloLogin.json';
@@ -32,7 +30,7 @@ const Login: FC = () => {
 
     setError('');
     axios
-      .post('/api/userauthentication', {
+      .post('https://localhost:8080/api/userauthentication', {
         password,
         email: username,
       })

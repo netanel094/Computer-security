@@ -12,6 +12,10 @@ import {
   Container,
 } from './System.style';
 import useCustomers from '../../hooks/useCustomers';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { ButtonLink } from '../Login/Login.style';
 
 interface Customer {
   first_name: string;
@@ -24,10 +28,11 @@ interface Customer {
 const System = () => {
   const [sortBy, setSortBy] = useState<keyof Customer>('first_name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const { customers, setSearch, deleteCustomer } = useCustomers({
-    sortBy,
-    sortOrder,
-  });
+  const { customers, setSearch, deleteCustomer, refetchCustomers } =
+    useCustomers({
+      sortBy,
+      sortOrder,
+    });
   const [newCustomer, setNewCustomer] = useState<Customer>({
     first_name: '',
     last_name: '',
@@ -48,6 +53,12 @@ const System = () => {
 
   const handleAddCustomer = () => {
     //setCustomers([...customers, newCustomer]);
+    axios
+      .post('https://localhost:8080/api/addclient', newCustomer)
+      .then(refetchCustomers)
+      .catch((error) => {
+        toast.error(error.response.data);
+      });
     setNewCustomer({
       first_name: '',
       last_name: '',
@@ -72,9 +83,10 @@ const System = () => {
           onChange={handleSearch}
         />
 
-        <Button onClick={() => setChangePassword(true)}>Change Password</Button>
+        <ButtonLink to="/ChangePassword">Change Password</ButtonLink>
         <Button onClick={() => setShowAddCustomer(true)}>Add Customer</Button>
       </Container>
+
       <Table>
         <thead>
           <tr>
@@ -166,7 +178,9 @@ const System = () => {
               <td>{customer.last_name}</td>
               <td>{customer.email}</td>
               <td>{customer.phone_number}</td>
-              <td>{customer.city}</td>
+              <td>
+                <div dangerouslySetInnerHTML={{ __html: customer.city }}></div>
+              </td>
               <td>
                 <DeleteButton onClick={() => deleteCustomer(customer.email)}>
                   Delete

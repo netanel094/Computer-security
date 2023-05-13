@@ -26,7 +26,6 @@ router.post('/', async function (req, res) {
 
     const updatedPassword = await allQueries.updatePassword(
       email,
-      old_password,
       new_password,
       con
     );
