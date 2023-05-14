@@ -11,7 +11,11 @@ router.post('/', async function (req, res) {
     const old_password = currentPassword;
     const new_password = newPassword;
     const verification_password = confirmNewPassword;
-    console.log({ currentPassword });
+
+    const realPassword = await allQueries.findUserPassword(email, con);
+
+    if (realPassword !== currentPassword)
+      return res.status(400).send('You entered incorrect old password !');
 
     if (!security.checkPassword(new_password))
       return res.status(400).send('The new password is not valid');
@@ -35,7 +39,7 @@ router.post('/', async function (req, res) {
     return res.status(200).send('Password changed succesfully!');
   } catch (error) {
     console.log(error);
-    return res.status(500).send('Error in back end');
+    return res.status(500).send('Error!');
   }
 });
 

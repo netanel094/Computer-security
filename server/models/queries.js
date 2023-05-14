@@ -259,10 +259,9 @@ const checkPasswordInHistory = (email, password, con) => {
 //Search for user password by his email
 const findUserPassword = async (email, con) => {
   const q = `select password from users_details where email = ?`;
-  const data = email;
 
   return new Promise(async (resolve, reject) => {
-    con.query(q, data, (err, res) => {
+    con.query(q, email, (err, res) => {
       if (err) return reject(err);
       return resolve(res[0].password);
     });
@@ -277,7 +276,7 @@ const updatePassword = async (email, new_password, con) => {
   return new Promise(async (resolve) => {
     const userExists = await checkUserExists(email, con);
     if (!userExists)
-      return resolve({ success: false, message: 'The user does not exist!' });
+      return resolve({ success: false, message: 'The user does not exist !' });
 
     const check = await checkPasswordInHistory(email, new_password, con);
     if (!check)

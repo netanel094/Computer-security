@@ -15,7 +15,8 @@ const ChangePassword: FC = () => {
   const navigate = useNavigate();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
+    const formElement = event.target as HTMLFormElement;
+    const formData = new FormData(formElement);
     const data = Object.fromEntries(formData.entries());
     const { newPassword, confirmNewPassword } = data;
     if (newPassword !== confirmNewPassword) {

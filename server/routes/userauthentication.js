@@ -30,7 +30,7 @@ router.post('/', async function (req, res) {
     if (countLogins && timeDiff < config.block_duration) {
       return res
         .status(400)
-        .send('You have attempted too many times. Try again later!');
+        .send('You have attempted too many times. Try again later !');
       //If the block duration has passed we reset the logins back to 0
     }
     if (countLogins && timeDiff > config.block_duration)
