@@ -1,6 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import AppBackground from '../../assets/img/AppBackground.png';
-import { redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const FormContainer = styled.div`
   background-image: url(${AppBackground});
@@ -85,6 +85,25 @@ export const LinkButton = styled.button`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+export const ButtonLink = styled(Link)`
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  justify-content: center;
+  text-decoration: none;
+`;
+
+export const NavigateLinks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
 `;
 
 export const RegisterLink = styled(Link)`
