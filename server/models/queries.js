@@ -389,13 +389,13 @@ const resetLogins = async (email, con) => {
 
 //Counting the logins in order to check if his logins count is more than allowed
 const countLogins = async (email, con) => {
-  const q = `select logins as l from users_details where email = ?`;
+  const q = `select logins as logs from users_details where email = ?`;
   const data = [email];
 
   return new Promise(async (resolve, reject) => {
     con.query(q, data, (err, res) => {
       if (err) return reject(err);
-      if (res[0]['l'] >= config.login_attempts) return resolve(true);
+      if (res[0].logs >= config.login_attempts) return resolve(true);
       return resolve(false);
     });
   });
