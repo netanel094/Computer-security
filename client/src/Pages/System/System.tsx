@@ -10,6 +10,7 @@ import {
   AddCustomerModal,
   AddCustomerModalButtons,
   Container,
+  ButtonsContainer,
 } from './System.style';
 import useCustomers from '../../hooks/useCustomers';
 import axios from 'axios';
@@ -81,11 +82,13 @@ const System = () => {
           placeholder="Search customers..."
           onChange={handleSearch}
         />
-
-        <ButtonLink to="/ChangePassword">Change Password</ButtonLink>
-        <Button onClick={() => setShowAddCustomer(true)}>Add Customer</Button>
+        <ButtonsContainer>
+          <ButtonLink to="/ChangePassword">Change Password</ButtonLink>
+          <Button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>
+            Add Customer
+          </Button>
+        </ButtonsContainer>
       </Container>
-
       <Table>
         <thead>
           <tr>
@@ -173,25 +176,11 @@ const System = () => {
         <tbody>
           {customers.map((customer, index) => (
             <tr key={index}>
-              <td>
-                <div
-                  dangerouslySetInnerHTML={{ __html: customer.first_name }}
-                />
-              </td>
-              <td>
-                <div dangerouslySetInnerHTML={{ __html: customer.last_name }} />
-              </td>
-              <td>
-                <div dangerouslySetInnerHTML={{ __html: customer.email }} />
-              </td>
-              <td>
-                <div
-                  dangerouslySetInnerHTML={{ __html: customer.phone_number }}
-                />
-              </td>
-              <td>
-                <div dangerouslySetInnerHTML={{ __html: customer.city }} />
-              </td>
+              <td>{customer.first_name}</td>
+              <td>{customer.last_name}</td>
+              <td>{customer.email}</td>
+              <td>{customer.phone_number}</td>
+              <td>{customer.city}</td>
               <td>
                 <DeleteButton onClick={() => deleteCustomer(customer.email)}>
                   Delete
@@ -240,7 +229,9 @@ const System = () => {
             onChange={handleInputChange}
           />
           <AddCustomerModalButtons>
-            <button onClick={() => setShowAddCustomer(false)}>Cancel</button>
+            <button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>
+              Cancel
+            </button>
             <button onClick={handleAddCustomer}>Add</button>
           </AddCustomerModalButtons>
         </AddCustomerModal>
