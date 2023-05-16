@@ -8,6 +8,9 @@ export const SystemContainer = styled.div`
   box-sizing: border-box;
   height: 100vh;
   display: flex;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -24,6 +27,15 @@ export const Container = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
+  
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 export const SearchBar = styled.input`
@@ -34,6 +46,10 @@ export const SearchBar = styled.input`
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const Table = styled.table`
@@ -81,11 +97,16 @@ export const Button = styled.button`
   background-color: #2ecc71;
   color: white;
   border: none;
+  margin-left: 20px;
   padding: 10px;
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 20px;
   justify-content: center;
+
+  @media screen and (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 export const AddCustomerModal = styled.div`
@@ -111,6 +132,12 @@ export const AddCustomerModal = styled.div`
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1em;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
   }
 `;
 
