@@ -6,7 +6,7 @@ export const SystemContainer = styled.div`
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -12,7 +12,6 @@ import {
   Container,
 } from './System.style';
 import useCustomers from '../../hooks/useCustomers';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { ButtonLink } from '../Login/Login.style';
@@ -174,11 +173,25 @@ const System = () => {
         <tbody>
           {customers.map((customer, index) => (
             <tr key={index}>
-              <td>{customer.first_name}</td>
-              <td>{customer.last_name}</td>
-              <td>{customer.email}</td>
-              <td>{customer.phone_number}</td>
-              <td>{customer.city}</td>
+              <td>
+                <div
+                  dangerouslySetInnerHTML={{ __html: customer.first_name }}
+                />
+              </td>
+              <td>
+                <div dangerouslySetInnerHTML={{ __html: customer.last_name }} />
+              </td>
+              <td>
+                <div dangerouslySetInnerHTML={{ __html: customer.email }} />
+              </td>
+              <td>
+                <div
+                  dangerouslySetInnerHTML={{ __html: customer.phone_number }}
+                />
+              </td>
+              <td>
+                <div dangerouslySetInnerHTML={{ __html: customer.city }} />
+              </td>
               <td>
                 <DeleteButton onClick={() => deleteCustomer(customer.email)}>
                   Delete
