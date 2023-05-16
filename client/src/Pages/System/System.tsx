@@ -10,6 +10,7 @@ import {
   AddCustomerModal,
   AddCustomerModalButtons,
   Container,
+  ButtonsContainer
 } from './System.style';
 import useCustomers from '../../hooks/useCustomers';
 import { Link } from 'react-router-dom';
@@ -82,11 +83,11 @@ const System = () => {
           placeholder="Search customers..."
           onChange={handleSearch}
         />
-
-        <ButtonLink to="/ChangePassword">Change Password</ButtonLink>
-        <Button onClick={() => setShowAddCustomer(true)}>Add Customer</Button>
+        <ButtonsContainer>
+          <ButtonLink to="/ChangePassword">Change Password</ButtonLink>
+          <Button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>Add Customer</Button>
+        </ButtonsContainer>
       </Container>
-
       <Table>
         <thead>
           <tr>
@@ -227,7 +228,7 @@ const System = () => {
             onChange={handleInputChange}
           />
           <AddCustomerModalButtons>
-            <button onClick={() => setShowAddCustomer(false)}>Cancel</button>
+            <button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>Cancel</button>
             <button onClick={handleAddCustomer}>Add</button>
           </AddCustomerModalButtons>
         </AddCustomerModal>
