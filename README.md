@@ -6,7 +6,7 @@ This project focuses on building two websites with login and register functional
 - **Login and Register**: Both websites provide a secure login and registration process for users. The login functionality ensures only authorized users can access the system.
 - **User System Page**: Users have access to a dedicated page where they can manage and view customer information.
 - **MySQL Database**: The project utilizes MySQL as the database management system to store and retrieve user and customer data securely.
-- **Front-end Technologies**: The front-end of both websites is built using TypeScript, React, and Styled Components, offering a modern and interactive user interface.
+- **Front-end Technologies**: The front-end of both websites is built using TypeScript, React, and Styled Components, powered by Vite, offering a modern and interactive user interface.
 - **Back-end Technology**: Express.js is employed as the back-end framework to handle server-side logic and facilitate communication with the database.
 
 ## Secured Website
@@ -28,8 +28,10 @@ To run the project locally, please follow these steps:
 3. Open a terminal and navigate to the project directory.
 4. Run the command `npm install` to install the required dependencies.
 5. Set up a MySQL database and update the database configuration settings in the project files.
-6. Run the command `npm start` to start the development server.
+6. Run the command `npm run dev` to start the development server.
 7. Access the secured website at `http://localhost:3000` and the unsecured website at `http://localhost:3001`.
+
+Note: The front-end of both websites is powered by Vite, a fast and lightweight development server. Vite optimizes the build process and provides a seamless development experience.
 
 ## Future Enhancements
 Here are some potential enhancements to consider for the project:
