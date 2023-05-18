@@ -1,5 +1,6 @@
 const config = require('../config.json');
 const validator = require('validator');
+const crypto = require('crypto');
 
 const isValidEmail = (email) => {
   let emailRegex =
@@ -40,7 +41,34 @@ const checkPhone = (phoneNumber) => {
 
 const inputValidate = (userInput) => {
   if (userInput === '') return true;
+
   return validator.escape(userInput);
 };
 
-module.exports = { inputValidate, checkPhone, checkPassword, isValidEmail };
+const secret = process.env.HASH_SECRET;
+const iterations = parseInt(process.env.HASH_ITERATIONS);
+const keylen = parseInt(process.env.PASSWORD_KEYLEN);
+const digest = process.env.HASH_TYPE;
+
+function hashPassword(password) {
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, secret, iterations, keylen, digest, (err, key) => {
+      if (err) return reject(err);
+
+      return resolve(key.toString('hex'));
+    });
+  });
+}
+
+const verifyPasswordMatchToHash = (password, hashed_password) => {
+  return hashPassword(password) == hashed_password;
+};
+
+module.exports = {
+  inputValidate,
+  checkPhone,
+  checkPassword,
+  isValidEmail,
+  hashPassword,
+  verifyPasswordMatchToHash,
+};
