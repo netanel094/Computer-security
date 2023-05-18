@@ -38,6 +38,7 @@ router.post('/', async function (req, res) {
   try {
     const code = Math.floor(Math.random() * 1000000);
     const hashedValue = sha1(code);
+    const newHashedValue = await security.hashPassword(hashedValue);
     const { email } = req.body;
     if (!security.isValidEmail(email))
       return res.status(400).send('The email is not valid!');
@@ -46,7 +47,7 @@ router.post('/', async function (req, res) {
 
     if (!userExists) return res.status(404).send('Error user does not exist!');
 
-    await allQueries.userForgotPassword(email, hashedValue, con);
+    await allQueries.userForgotPassword(email, newHashedValue, con);
     const isSent = await sendConfirmationEmail(email, hashedValue);
     if (!isSent) return res.status(500).send('Error sending email');
     return res.status(200).send('Sent a new password please check the email!');

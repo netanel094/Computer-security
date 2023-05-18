@@ -181,11 +181,11 @@ const insertPasswordHistory = async (email, password, con) => {
       if (err) return reject(err);
 
       const BiggerThanThreePassword = await countPasswordInHistory(email, con);
-      if (!BiggerThanThreePassword) return resolve(false);
+      if (BiggerThanThreePassword) {
+        const deletePassword = await deleteOldPasswordHistory(email, con);
+        if (!deletePassword) return resolve(false);
+      }
 
-      const deletePassword = await deleteOldPasswordHistory(email, con);
-
-      if (!deletePassword) return resolve(false);
       return resolve(true);
     });
   });
