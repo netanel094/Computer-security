@@ -3,7 +3,7 @@
   "login_attempts": 3,
   "password_history": 3,
   "password": {
-    "length": 5,
+    "length": 10,
     "avoid_sequence": ["123", "abc", "qwerty"],
     "chars": {
       "uppercase": true,

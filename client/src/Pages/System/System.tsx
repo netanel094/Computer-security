@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   SystemContainer,
   WelcomeText,
@@ -10,12 +10,12 @@ import {
   AddCustomerModal,
   AddCustomerModalButtons,
   Container,
-  ButtonsContainer
-} from './System.style';
-import useCustomers from '../../hooks/useCustomers';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { ButtonLink } from '../Login/Login.style';
+  ButtonsContainer,
+} from "./System.style";
+import useCustomers from "../../hooks/useCustomers";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ButtonLink } from "../Login/Login.style";
 
 interface Customer {
   first_name: string;
@@ -26,19 +26,19 @@ interface Customer {
 }
 
 const System = () => {
-  const [sortBy, setSortBy] = useState<keyof Customer>('first_name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState<keyof Customer>("first_name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const { customers, setSearch, deleteCustomer, refetchCustomers } =
     useCustomers({
       sortBy,
       sortOrder,
     });
   const [newCustomer, setNewCustomer] = useState<Customer>({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone_number: '',
-    city: '',
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    city: "",
   });
   const [showAddCustomer, setShowAddCustomer] = useState<boolean>(false);
   const [changePassword, setChangePassword] = useState<boolean>(false);
@@ -54,17 +54,17 @@ const System = () => {
   const handleAddCustomer = () => {
     //setCustomers([...customers, newCustomer]);
     axios
-      .post('https://localhost:8080/api/addclient', newCustomer)
+      .post("https://localhost:8080/api/addclient", newCustomer)
       .then(refetchCustomers)
       .catch((error) => {
         toast.error(error.response.data);
       });
     setNewCustomer({
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone_number: '',
-      city: '',
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone_number: "",
+      city: "",
     });
     setShowAddCustomer(false);
   };
@@ -84,7 +84,9 @@ const System = () => {
         />
         <ButtonsContainer>
           <ButtonLink to="/ChangePassword">Change Password</ButtonLink>
-          <Button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>Add Customer</Button>
+          <Button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>
+            Add Customer
+          </Button>
         </ButtonsContainer>
       </Container>
       <Table>
@@ -92,80 +94,80 @@ const System = () => {
           <tr>
             <th>
               <SortButton
-                active={sortBy === 'first_name'}
+                active={sortBy === "first_name"}
                 onClick={() => {
-                  if (sortBy === 'first_name') {
-                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  if (sortBy === "first_name") {
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                   } else {
-                    setSortBy('first_name');
-                    setSortOrder('asc');
+                    setSortBy("first_name");
+                    setSortOrder("asc");
                   }
                 }}
               >
-                Name{' '}
-                {sortBy === 'first_name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Name{" "}
+                {sortBy === "first_name" && (sortOrder === "asc" ? "↑" : "↓")}
               </SortButton>
             </th>
             <th>
               <SortButton
-                active={sortBy === 'last_name'}
+                active={sortBy === "last_name"}
                 onClick={() => {
-                  if (sortBy === 'last_name') {
-                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  if (sortBy === "last_name") {
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                   } else {
-                    setSortBy('last_name');
-                    setSortOrder('asc');
+                    setSortBy("last_name");
+                    setSortOrder("asc");
                   }
                 }}
               >
-                Last Name{' '}
-                {sortBy === 'last_name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Last Name{" "}
+                {sortBy === "last_name" && (sortOrder === "asc" ? "↑" : "↓")}
               </SortButton>
             </th>
             <th>
               <SortButton
-                active={sortBy === 'email'}
+                active={sortBy === "email"}
                 onClick={() => {
-                  if (sortBy === 'email') {
-                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  if (sortBy === "email") {
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                   } else {
-                    setSortBy('email');
-                    setSortOrder('asc');
+                    setSortBy("email");
+                    setSortOrder("asc");
                   }
                 }}
               >
-                Email {sortBy === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Email {sortBy === "email" && (sortOrder === "asc" ? "↑" : "↓")}
               </SortButton>
             </th>
             <th>
               <SortButton
-                active={sortBy === 'phone_number'}
+                active={sortBy === "phone_number"}
                 onClick={() => {
-                  if (sortBy === 'phone_number') {
-                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  if (sortBy === "phone_number") {
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                   } else {
-                    setSortBy('phone_number');
-                    setSortOrder('asc');
+                    setSortBy("phone_number");
+                    setSortOrder("asc");
                   }
                 }}
               >
-                phone Number{' '}
-                {sortBy === 'phone_number' && (sortOrder === 'asc' ? '↑' : '↓')}
+                phone Number{" "}
+                {sortBy === "phone_number" && (sortOrder === "asc" ? "↑" : "↓")}
               </SortButton>
             </th>
             <th>
               <SortButton
-                active={sortBy === 'city'}
+                active={sortBy === "city"}
                 onClick={() => {
-                  if (sortBy === 'city') {
-                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  if (sortBy === "city") {
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                   } else {
-                    setSortBy('city');
-                    setSortOrder('asc');
+                    setSortBy("city");
+                    setSortOrder("asc");
                   }
                 }}
               >
-                Address {sortBy === 'city' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Address {sortBy === "city" && (sortOrder === "asc" ? "↑" : "↓")}
               </SortButton>
             </th>
             <th></th>
@@ -227,7 +229,9 @@ const System = () => {
             onChange={handleInputChange}
           />
           <AddCustomerModalButtons>
-            <button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>Cancel</button>
+            <button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>
+              Cancel
+            </button>
             <button onClick={handleAddCustomer}>Add</button>
           </AddCustomerModalButtons>
         </AddCustomerModal>
