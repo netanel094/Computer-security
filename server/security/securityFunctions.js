@@ -1,5 +1,6 @@
-const config = require('../config.json');
-const validator = require('validator');
+const config = require("../config.json");
+const validator = require("validator");
+const crypto = require("crypto");
 
 const isValidEmail = (email) => {
   let emailRegex =
@@ -14,23 +15,23 @@ const checkPassword = (password) => {
   const specialRegex = /[!@#$%^&)(+=._-]/;
   const seqs = config.password.avoid_sequence;
   if (seqs.some((seq) => password.includes(seq)))
-    return 'password contains a sequence';
+    return "password contains a sequence";
 
   if (!uppercaseRegex.test(password) && config.password.chars.uppercase)
-    return 'uppercase letter';
+    return "uppercase letter";
 
   if (!numbersRegex.test(password) && config.password.chars.numbers)
-    return 'number';
+    return "number";
 
   if (!specialRegex.test(password) && config.password.chars.special)
-    return 'special character';
+    return "special character";
 
   if (!lowercaseRegex.test(password) && config.password.chars.lowercase)
-    return 'lowercase letter';
+    return "lowercase letter";
 
-  if (password.length != config.password.length) return 'length';
+  if (password.length != config.password.length) return "length";
 
-  return 'all required elements';
+  return "all required elements";
 };
 
 const checkPhone = (phoneNumber) => {
@@ -39,9 +40,35 @@ const checkPhone = (phoneNumber) => {
 };
 
 const inputValidate = (userInput) => {
-  if (userInput === '') return true;
+  if (userInput === "") return true;
 
   return validator.escape(userInput);
 };
 
-module.exports = { inputValidate, checkPhone, checkPassword, isValidEmail };
+const secret = process.env.HASH_SECRET;
+const iterations = parseInt(process.env.HASH_ITERATIONS);
+const keylen = parseInt(process.env.PASSWORD_KEYLEN);
+const digest = process.env.HASH_TYPE;
+
+function hashPassword(password) {
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, secret, iterations, keylen, digest, (err, key) => {
+      if (err) return reject(err);
+
+      return resolve(key.toString("hex"));
+    });
+  });
+}
+
+const verifyPasswordMatchToHash = (password, hashed_password) => {
+  return hashPassword(password) == hashed_password;
+};
+
+module.exports = {
+  inputValidate,
+  checkPhone,
+  checkPassword,
+  isValidEmail,
+  hashPassword,
+  verifyPasswordMatchToHash,
+};

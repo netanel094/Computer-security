@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { Container, Form, Input, ErrorMessage, Button } from './Register.style';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Register: FC = () => {
   const navigate = useNavigate();
@@ -14,12 +15,6 @@ const Register: FC = () => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [isValid, setIsValid] = useState(true);
-  // const test = async () => {
-  //   const response = await axios.get('https://localhost:8080/api/test');
-  //   console.log(response);
-  // };
-
-  // window.test = test;
 
   const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,7 +59,9 @@ const Register: FC = () => {
       })
       .then((res) => {
         console.log(res);
+        toast.success(res.data);
         setMessage(res.data);
+
         navigate('/');
       })
       .catch((err) => {

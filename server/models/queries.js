@@ -1,5 +1,5 @@
-const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('config.json'));
+const fs = require("fs");
+const config = JSON.parse(fs.readFileSync("config.json"));
 
 //Checking if email exists in users schema
 const checkUserMail = (mail, con) => {
@@ -10,10 +10,10 @@ const checkUserMail = (mail, con) => {
       (err, result) => {
         if (err) return reject(err);
         if (result.length > 0) {
-          console.log('Email found!!');
+          console.log("Email found!!");
           return resolve(true);
         }
-        console.log('Email not found');
+        console.log("Email not found");
         return resolve(false);
       }
     );
@@ -26,10 +26,10 @@ const checkClientMail = (mail, con) => {
     con.query(`SELECT * FROM clients WHERE email = ?`, mail, (err, result) => {
       if (err) return reject(err);
       if (result.length > 0) {
-        console.log('Email found!!');
+        console.log("Email found!!");
         return resolve(true);
       }
-      console.log('Email not found');
+      console.log("Email not found");
       return resolve(false);
     });
   });
@@ -64,7 +64,7 @@ const insertClient = async (
 
   return new Promise((resolve, reject) => {
     if (emailExists) {
-      console.log('The client already exists');
+      console.log("The client already exists");
       return resolve(false);
     }
     con.query(
@@ -75,7 +75,7 @@ const insertClient = async (
           console.log(err);
           return reject(err);
         }
-        console.log('Inserted succesfully');
+        console.log("Inserted succesfully");
         return resolve(true);
       }
     );
@@ -100,19 +100,19 @@ const checkClient = async (first_name, last_name, city, phone_number, con) => {
 const removeClient = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     const checkMail = await checkClientMail(email, con);
-    const q = 'DELETE FROM clients WHERE email = ?';
+    const q = "DELETE FROM clients WHERE email = ?";
     if (!checkMail) {
-      console.log('The client is not found');
+      console.log("The client is not found");
       return resolve(false);
     }
     con.query(q, email, (err, res) => {
       if (err) return reject(err);
 
       if (res.affectedRows === 0) {
-        console.log('Client is not removed due to something unexpected');
+        console.log("Client is not removed due to something unexpected");
         return resolve(false);
       }
-      console.log('Client removed successfully!');
+      console.log("Client removed successfully!");
       return resolve(true);
     });
   });
@@ -158,10 +158,10 @@ const deleteOldPasswordHistory = async (email, con) => {
 
     con.query(removeOldPassword, [email, email], (err) => {
       if (err) {
-        console.log('Error removing oldest password!');
+        console.log("Error removing oldest password!");
         return reject(err);
       }
-      console.log('Removed oldest password successfully');
+      console.log("Removed oldest password successfully");
       return resolve(true);
     });
   });
@@ -173,7 +173,7 @@ const countPasswordInHistory = async (email, con) => {
     con.query(countPassword, [email], (err, res) => {
       if (err) return reject(err);
 
-      if (res[0]['count_mail'] > config.password_history) return resolve(true);
+      if (res[0].count_mail > config.password_history) return resolve(true);
       return resolve(false);
     });
   });
@@ -188,12 +188,15 @@ const insertPasswordHistory = async (email, password, con) => {
     con.query(insertPassword, [email, password, currentDate], async (err) => {
       if (err) return reject(err);
 
-      const BiggerThanThreePassword = await countPasswordInHistory(email, con);
-      if (!BiggerThanThreePassword) return resolve(false);
+      const isBiggerThanThreePassword = await countPasswordInHistory(
+        email,
+        con
+      );
 
-      const deletePassword = await deleteOldPasswordHistory(email, con);
-
-      if (!deletePassword) return resolve(false);
+      if (isBiggerThanThreePassword) {
+        const deletedPassword = await deleteOldPasswordHistory(email, con);
+        if (!deletedPassword) return resolve(false);
+      }
       return resolve(true);
     });
   });
@@ -214,7 +217,7 @@ const insertUser = async (
 
   return new Promise(async (resolve, reject) => {
     if (emailExists) {
-      console.log('The user already exists');
+      console.log("The user already exists");
       return resolve(false);
     }
     let flag = 0;
@@ -232,10 +235,10 @@ const insertUser = async (
           con
         );
         if (!insertedPassword && flag === 0) {
-          console.log('Something went wrong');
+          console.log("Something went wrong");
           return resolve(false);
         }
-        console.log('Inserted to password history and to users_details!');
+        console.log("Inserted to password history and to users_details!");
         return resolve(true);
       }
     );
@@ -250,7 +253,7 @@ const checkPasswordInHistory = (email, password, con) => {
     con.query(q, [email, password], (err, res) => {
       if (err) return reject(err);
       if (res.length > 0) return resolve(false);
-      console.log('User did not use this password!');
+      console.log("User did not use this password!");
       return resolve(true);
     });
   });
@@ -271,26 +274,39 @@ const findUserPassword = async (email, con) => {
 //Updating the password
 const updatePassword = async (email, new_password, con) => {
   const updatingPassword =
-    'UPDATE users_details SET password = ? WHERE email = ?';
+    "UPDATE users_details SET password = ? WHERE email = ?";
 
-  return new Promise(async (resolve) => {
-    const userExists = await checkUserExists(email, con);
-    if (!userExists)
-      return resolve({ success: false, message: 'The user does not exist !' });
+  return new Promise(async (resolve, reject) => {
+    try {
+      const userExists = await checkUserExists(email, con);
+      if (!userExists)
+        return resolve({
+          success: false,
+          message: "The user does not exist !",
+        });
 
-    const check = await checkPasswordInHistory(email, new_password, con);
-    if (!check)
-      return resolve({
-        success: false,
-        message: 'The password is already used !',
+      const check = await checkPasswordInHistory(email, new_password, con);
+      if (!check)
+        return resolve({
+          success: false,
+          message: "The password is already used !",
+        });
+
+      const pushPassword = await insertPasswordHistory(
+        email,
+        new_password,
+        con
+      );
+      console.log(pushPassword);
+      if (!pushPassword) throw "failed pushing to password history";
+
+      con.query(updatingPassword, [new_password, email], (err) => {
+        if (err) return reject(err);
+        return resolve({ success: true, message: "Password is changed!" });
       });
-
-    const pushPassword = await insertPasswordHistory(email, new_password, con);
-    if (!pushPassword) throw 'failed pushing to password history';
-    con.query(updatingPassword, [new_password, email], (err) => {
-      if (err) return reject(err);
-      return resolve({ success: true, message: 'Password is changed!' });
-    });
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 
@@ -303,7 +319,7 @@ const sortBy = async (column_name, con) => {
       (error) => {
         if (error) return reject(false);
 
-        console.log('Successfully sorted!');
+        console.log("Successfully sorted!");
         return resolve(true);
       }
     );
@@ -314,19 +330,19 @@ const defaultQuery = `SELECT * FROM clients WHERE email LIKE ? OR first_name LIK
 
 const queries = {
   first_name: {
-    asc: ' order by first_name asc',
-    desc: ' order by first_name desc',
+    asc: " order by first_name asc",
+    desc: " order by first_name desc",
   },
   last_name: {
-    asc: ' order by last_name asc',
-    desc: ' order by last_name desc',
+    asc: " order by last_name asc",
+    desc: " order by last_name desc",
   },
   phone_number: {
-    asc: ' order by phone_number asc',
-    desc: ' order by phone_number desc',
+    asc: " order by phone_number asc",
+    desc: " order by phone_number desc",
   },
-  city: { asc: ' order by city asc', desc: ' order by city desc' },
-  email: { asc: ' order by email asc', desc: ' order by email desc' },
+  city: { asc: " order by city asc", desc: " order by city desc" },
+  email: { asc: " order by email asc", desc: " order by email desc" },
 };
 
 //Search the client by one of his properties
@@ -368,7 +384,7 @@ const updateLogins = async (email, con) => {
     con.query(q, data, (err) => {
       if (err) return reject(false);
 
-      console.log('Updated the logins!');
+      console.log("Updated the logins!");
       return resolve(true);
     });
   });
@@ -389,13 +405,13 @@ const resetLogins = async (email, con) => {
 
 //Counting the logins in order to check if his logins count is more than allowed
 const countLogins = async (email, con) => {
-  const q = `select logins as l from users_details where email = ?`;
+  const q = `select logins as logs from users_details where email = ?`;
   const data = [email];
 
   return new Promise(async (resolve, reject) => {
     con.query(q, data, (err, res) => {
       if (err) return reject(err);
-      if (res[0]['l'] >= config.login_attempts) return resolve(true);
+      if (res[0].logs >= config.login_attempts) return resolve(true);
       return resolve(false);
     });
   });
@@ -423,7 +439,7 @@ const lastTimeLogin = async (email, con) => {
   return new Promise(async (resolve, reject) => {
     con.query(q, data, (err, res) => {
       if (err) return reject(err);
-      return resolve(res[0]['created_at']);
+      return resolve(res[0]["created_at"]);
     });
   });
 };
@@ -440,7 +456,7 @@ const userForgotPassword = async (email, code, con) => {
       // console.log('Query:', con.query(q, [email, code]).sql);
       if (err) return reject(err);
       console.log(
-        'Changing the password of the user with a value from the email'
+        "Changing the password of the user with a value from the email"
       );
       return resolve(true);
     });

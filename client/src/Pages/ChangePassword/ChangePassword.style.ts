@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import AppBackground from '../../assets/img/AppBackground.png';
+import AppBackground from "../../assets/img/AppBackground.png";
 
 interface InputProps {
   isInvalid?: boolean;
@@ -7,10 +7,18 @@ interface InputProps {
 
 export const Container = styled.div`
   background-image: url(${AppBackground});
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 100vh;
   display: flex;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  background-repeat: repeat;
 `;
 
 export const Form = styled.form`

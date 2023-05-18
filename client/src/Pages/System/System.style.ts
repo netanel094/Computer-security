@@ -1,12 +1,12 @@
-import styled from 'styled-components';
-import AppBackground from '../../assets/img/AppBackground.png';
+import styled from "styled-components";
+import AppBackground from "../../assets/img/AppBackground.png";
 
 export const SystemContainer = styled.div`
   background-image: url(${AppBackground});
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   background-repeat: no-repeat;
   background-position: center;
@@ -14,6 +14,7 @@ export const SystemContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-repeat: repeat;
 `;
 
 export const WelcomeText = styled.h1`
@@ -27,7 +28,8 @@ export const Container = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
-  
+
+
   @media screen and (max-width: 768px) {
     flex-direction: column;
   }
@@ -73,8 +75,8 @@ export const Table = styled.table`
 export const SortButton = styled.button<{ active: boolean }>`
   display: flex;
   align-items: center;
-  font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
-  background-color: ${({ active }) => (active ? '#000' : 'transparent')};
+  font-weight: ${({ active }) => (active ? "bold" : "normal")};
+  background-color: ${({ active }) => (active ? "#000" : "transparent")};
   border: none;
   cursor: pointer;
   color: #fff;
