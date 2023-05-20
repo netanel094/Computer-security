@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const pages = require('./pages');
 
 const addClientRouter = require('./routes/addclient');
 const removeClientRouter = require('./routes/removeclient');
@@ -34,5 +35,6 @@ app.use('/api/userauthentication', userAuthentication);
 app.use('/api/changepassword', changePasswordRouter);
 app.use('/api/userforgotpasssword', UserForgotPasswordRouter);
 app.use('/api/searchtable', searchTableRouter);
+app.use(pages);
 
 module.exports = app;
