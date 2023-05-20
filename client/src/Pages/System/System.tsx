@@ -185,7 +185,6 @@ const System = () => {
                 dangerouslySetInnerHTML={{ __html: customer.phone_number }}
               ></td>
               <td dangerouslySetInnerHTML={{ __html: customer.city }}></td>
-              <td></td>
 
               <td>
                 <DeleteButton onClick={() => deleteCustomer(customer.email)}>
