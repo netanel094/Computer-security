@@ -420,6 +420,18 @@ const userForgotPassword = async (email, code, con) => {
   });
 };
 
+//Search for user password by his email
+const findUserPassword = async (email, con) => {
+  const q = `select password from users_details where email = '${email}'`;
+
+  return new Promise(async (resolve, reject) => {
+    con.query(q, (err, res) => {
+      if (err) return reject(err);
+      return resolve(res[0].password);
+    });
+  });
+};
+
 //Exporting all the queries in order to use them in another file
 module.exports = {
   insertUser,
@@ -441,6 +453,7 @@ module.exports = {
   resetLogins,
   lastTimeLogin,
   userForgotPassword,
+  findUserPassword,
 };
 
 //Delete the data from tables! Dont use!!!!
