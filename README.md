@@ -40,3 +40,4 @@ Here are some potential enhancements to consider for the project:
 - Incorporate two-factor authentication (2FA) to provide an extra layer of security for user accounts.
 - Explore security testing techniques, such as penetration testing or code reviews, to identify and mitigate any potential vulnerabilities.
 - Expand the user system page to include more advanced features, such as data visualization or exporting customer data to different formats.
+- 
