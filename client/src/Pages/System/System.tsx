@@ -10,14 +10,12 @@ import {
   AddCustomerModal,
   AddCustomerModalButtons,
   Container,
-
   ButtonsContainer,
 } from "./System.style";
 import useCustomers from "../../hooks/useCustomers";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ButtonLink } from "../Login/Login.style";
-
 
 interface Customer {
   first_name: string;
@@ -87,9 +85,9 @@ const System = () => {
         <ButtonsContainer>
           <ButtonLink to="/ChangePassword">Change Password</ButtonLink>
 
-          
-          <Button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>Add Customer</Button>
-          
+          <Button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>
+            Add Customer
+          </Button>
         </ButtonsContainer>
       </Container>
       <Table>
@@ -232,8 +230,9 @@ const System = () => {
             onChange={handleInputChange}
           />
           <AddCustomerModalButtons>
-
-            <button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>Cancel</button>
+            <button onClick={() => setShowAddCustomer((prevShow) => !prevShow)}>
+              Cancel
+            </button>
 
             <button onClick={handleAddCustomer}>Add</button>
           </AddCustomerModalButtons>
