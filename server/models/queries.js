@@ -174,10 +174,10 @@ const countPasswordInHistory = async (email, con) => {
 //Inserting the password of the user to password history
 const insertPasswordHistory = async (email, password, con) => {
   const currentDate = new Date();
-  const insertPassword = `insert into password_history (email, password, creation_date) values ('${email}', '${password}', '${currentDate}')`;
+  const insertPassword = `insert into password_history (email, password, creation_date) values ('${email}', '${password}', ?)`;
 
   return new Promise(async (resolve, reject) => {
-    con.query(insertPassword, async (err) => {
+    con.query(insertPassword, currentDate, async (err) => {
       if (err) return reject(err);
 
       const BiggerThanThreePassword = await countPasswordInHistory(email, con);
