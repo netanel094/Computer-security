@@ -176,11 +176,17 @@ const System = () => {
         <tbody>
           {customers.map((customer, index) => (
             <tr key={index}>
-              <td>{customer.first_name}</td>
-              <td>{customer.last_name}</td>
-              <td>{customer.email}</td>
-              <td>{customer.phone_number}</td>
-              <td>{customer.city}</td>
+              <td
+                dangerouslySetInnerHTML={{ __html: customer.first_name }}
+              ></td>
+              <td dangerouslySetInnerHTML={{ __html: customer.last_name }}></td>
+              <td dangerouslySetInnerHTML={{ __html: customer.email }}></td>
+              <td
+                dangerouslySetInnerHTML={{ __html: customer.phone_number }}
+              ></td>
+              <td dangerouslySetInnerHTML={{ __html: customer.city }}></td>
+              <td></td>
+
               <td>
                 <DeleteButton onClick={() => deleteCustomer(customer.email)}>
                   Delete
