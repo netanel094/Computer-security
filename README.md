@@ -29,7 +29,7 @@ To run the project locally, please follow these steps:
 4. Run the command `npm install` to install the required dependencies.
 5. Set up a MySQL database and update the database configuration settings in the project files.
 6. Run the command `npm run dev` to start the development server.
-7. Access the secured website at `http://localhost:3000` and the unsecured website at `http://localhost:3001`.
+7. Access the secured website at `http://localhost:8080` and the unsecured website at `http://localhost:8081`.
 
 Note: The front-end of both websites is powered by Vite, a fast and lightweight development server. Vite optimizes the build process and provides a seamless development experience.
 
