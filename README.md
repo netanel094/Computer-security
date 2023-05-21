@@ -14,8 +14,7 @@ The secured website is designed to withstand Stored XSS attacks and SQL injectio
 
 1. **Stored XSS Protection**: All user input is properly sanitized and validated on both the client and server side to prevent the execution of malicious scripts injected through user inputs. The website ensures that user-generated content is displayed without posing a security risk.
 2. **SQL Injection Protection**: SQL queries are constructed using parameterized queries or prepared statements to prevent SQL injection attacks. User inputs are treated as data rather than executable code, effectively mitigating the risk of unauthorized database access.
-3. **Secure Session Management**: The website employs secure session management techniques, such as using randomly generated session identifiers and securely storing session data. This prevents session hijacking and ensures user authentication and authorization.
-4. **Error Handling**: Appropriate error handling mechanisms are implemented to provide minimal error messages to users, preventing potential information leakage that could aid attackers.
+3. **Error Handling**: Appropriate error handling mechanisms are implemented to provide minimal error messages to users, preventing potential information leakage that could aid attackers.
 
 ## Unsecured Website
 The unsecured website is intentionally left vulnerable to demonstrate the potential consequences of inadequate security measures. It lacks the protective measures mentioned above, making it susceptible to Stored XSS attacks and SQL injection attacks. This website serves as a comparison to highlight the importance of proper security practices.
@@ -29,7 +28,7 @@ To run the project locally, please follow these steps:
 4. Run the command `npm install` to install the required dependencies.
 5. Set up a MySQL database and update the database configuration settings in the project files.
 6. Run the command `npm run dev` to start the development server.
-7. Access the secured website at `https://localhost:8080` and the unsecured website at `https://localhost:8081`.
+7. Access the secured website at `SequredQ branch` and the unsecured website at `notSecuredNew branch`.
 
 Note: The front-end of both websites is powered by Vite, a fast and lightweight development server. Vite optimizes the build process and provides a seamless development experience.
 
@@ -40,4 +39,4 @@ Here are some potential enhancements to consider for the project:
 - Incorporate two-factor authentication (2FA) to provide an extra layer of security for user accounts.
 - Explore security testing techniques, such as penetration testing or code reviews, to identify and mitigate any potential vulnerabilities.
 - Expand the user system page to include more advanced features, such as data visualization or exporting customer data to different formats.
-- 
+
