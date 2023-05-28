@@ -1,15 +1,15 @@
-var tls = require('tls');
-var https = require('https');
-var fs = require('fs');
-var app = require('../app');
+var tls = require("tls");
+var https = require("https");
+var fs = require("fs");
+var app = require("../app");
 
 const options = {
   port: 443,
   key: fs.readFileSync(
-    'C:/Users/shonk/Desktop/Computer-security/localhost-key.pem'
+    "C:/Users/97253/Desktop/degree/thirdGarade/semesterB/Computer-security/localhost-key.pem"
   ),
   cert: fs.readFileSync(
-    'C:/Users/shonk/Desktop/Computer-security/localhost.pem'
+    "C:/Users/97253/Desktop/degree/thirdGarade/semesterB/Computer-security/localhost.pem"
   ),
   minVersion: tls.Server.TLSv1_2_method,
 };
@@ -17,7 +17,7 @@ const options = {
 const server = https.createServer(options, app);
 
 server.listen(process.env.PORT, () => {
-  console.log('Server is running on port ' + process.env.PORT);
+  console.log("Server is running on port " + process.env.PORT);
 });
 // server.on('error', onError);
 // server.on('listening', onListening);

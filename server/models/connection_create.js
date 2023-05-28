@@ -1,15 +1,15 @@
-const mysql = require('mysql2');
-require('dotenv').config();
+const mysql = require("mysql2");
+require("dotenv").config();
 
 // Create a connection to the MySQL server
 const connectionPromise = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'abcd',
-  database: 'communication_ltd',
+  host: "localhost",
+  user: "root",
+  password: "Natan112233",
+  database: "communication_ltd",
 });
 
-connectionPromise.on('error', (err) => {
+connectionPromise.on("error", (err) => {
   console.error(`Error connecting to MySQL server: ${err}`);
 });
 
