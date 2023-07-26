@@ -29,7 +29,8 @@ const checkPassword = (password) => {
   if (!lowercaseRegex.test(password) && config.password.chars.lowercase)
     return "lowercase letter";
 
-  if (password.length != config.password.length) return "length";
+  if (password.length < config.password.length)
+    return `length must be more than ${config.password.length}`;
 
   return "all required elements";
 };
