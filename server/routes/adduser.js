@@ -15,9 +15,12 @@ router.post("/", async function (req, res) {
 
     if (!security.isValidEmail(email))
       return res.status(400).send("The email is not valid!");
+    const passwordResult = security.checkPassword(password);
 
-    if (security.checkPassword(password) !== "all required elements")
-      return res.status(400).send("The password is not valid!");
+    if (passwordResult !== "all required elements")
+      return res
+        .status(400)
+        .send(`The password is not valid! --> ${passwordResult}`);
 
     if (!security.checkPhone(phone_number))
       return res.status(400).send("The phone number is not valid!");
