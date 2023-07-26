@@ -1,16 +1,20 @@
-import styled from 'styled-components';
-import AppBackground from '../../assets/img/AppBackground.png';
+import styled from "styled-components";
+import AppBackground from "../../assets/img/AppBackground.png";
 
 export const SystemContainer = styled.div`
   background-image: url(${AppBackground});
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-repeat: repeat;
 `;
 
 export const WelcomeText = styled.h1`
@@ -24,6 +28,16 @@ export const Container = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
+
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 export const SearchBar = styled.input`
@@ -34,6 +48,10 @@ export const SearchBar = styled.input`
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const Table = styled.table`
@@ -57,8 +75,8 @@ export const Table = styled.table`
 export const SortButton = styled.button<{ active: boolean }>`
   display: flex;
   align-items: center;
-  font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
-  background-color: ${({ active }) => (active ? '#000' : 'transparent')};
+  font-weight: ${({ active }) => (active ? "bold" : "normal")};
+  background-color: ${({ active }) => (active ? "#000" : "transparent")};
   border: none;
   cursor: pointer;
   color: #fff;
@@ -81,11 +99,16 @@ export const Button = styled.button`
   background-color: #2ecc71;
   color: white;
   border: none;
+  margin-left: 20px;
   padding: 10px;
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 20px;
   justify-content: center;
+
+  @media screen and (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 export const AddCustomerModal = styled.div`
@@ -111,6 +134,12 @@ export const AddCustomerModal = styled.div`
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1em;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
   }
 `;
 

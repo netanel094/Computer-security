@@ -1,6 +1,6 @@
-import styled, { css, keyframes } from 'styled-components';
-import AppBackground from '../../assets/img/AppBackground.png';
-import { Link } from 'react-router-dom';
+import styled, { css, keyframes } from "styled-components";
+import AppBackground from "../../assets/img/AppBackground.png";
+import { Link } from "react-router-dom";
 
 export const FormContainer = styled.div`
   background-image: url(${AppBackground});
@@ -13,7 +13,7 @@ export const FormContainer = styled.div`
 `;
 
 export const FormWrapper = styled.div`
-  display: 'flex';
+  display: "flex";
   max-width: 400px;
   width: 100%;
   padding: 30px;
