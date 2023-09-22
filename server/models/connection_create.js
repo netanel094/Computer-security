@@ -3,10 +3,10 @@ require("dotenv").config();
 
 // Create a connection to the MySQL server
 const connectionPromise = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Natan112233",
-  database: "communication_ltd",
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE,
 });
 
 connectionPromise.on("error", (err) => {
